@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DailyReport;
+use App\Models\MaterialUsage;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -44,13 +45,52 @@ class DashboardController extends Controller
             ->whereBetween('report_date', [$startOfMonth, $today])
             ->get();
 
+        /*
+        |--------------------------------------------------------------------------
+        | Ketahanan Stock
+        |--------------------------------------------------------------------------
+        | Rumus:
+        | Ketahanan Stock = Closing Stock / Rata-rata Pemakaian Harian
+        |
+        | Contoh:
+        | Stock Klinker = 10.000 ton
+        | Total pemakaian Klinker bulan ini = 20.000 ton
+        | Hari berjalan = 10 hari
+        | Rata-rata pemakaian = 20.000 / 10 = 2.000 ton/hari
+        | Ketahanan stock = 10.000 / 2.000 = 5 hari
+        */
+        $stockResistance = [];
+
+        if ($todayReport) {
+            foreach ($todayReport->materialStocks as $stock) {
+                $totalUsage = MaterialUsage::where('material_name', $stock->material_name)
+                    ->whereHas('dailyReport', function ($query) use ($startOfMonth, $today) {
+                        $query->whereBetween('report_date', [$startOfMonth, $today]);
+                    })
+                    ->sum('quantity');
+
+                $averageUsage = $dayOfMonth > 0 ? $totalUsage / $dayOfMonth : 0;
+
+                $resistanceDays = $averageUsage > 0 ? $stock->quantity / $averageUsage : 0;
+
+                $stockResistance[] = [
+                    'material_name' => $stock->material_name,
+                    'stock' => $stock->quantity,
+                    'average_usage' => $averageUsage,
+                    'resistance_days' => $resistanceDays,
+                    'unit' => $stock->unit,
+                ];
+            }
+        }
+
         return view('dashboard.index', compact(
             'todayReport',
             'mtdProductionCm',
             'mtdProductionPacker',
             'avgProductionCm',
             'avgProductionPacker',
-            'chartReports'
+            'chartReports',
+            'stockResistance'
         ));
     }
 }

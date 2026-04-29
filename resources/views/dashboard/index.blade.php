@@ -195,86 +195,164 @@
                     </div>
                 </div>
 
-                <table class="table-modern">
-                    <thead>
-                        <tr>
-                            <th>Material</th>
-                            <th>Qty</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($todayReport->materialStocks as $stock)
-                            <tr>
-                                <td>{{ $stock->material_name }}</td>
-                                <td>{{ number_format($stock->quantity, 2, ',', '.') }} {{ $stock->unit }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="2">Belum ada data stock</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                <div class="material-list">
+                    @forelse($todayReport->materialStocks as $stock)
+                        <div class="material-item">
+                            <div class="material-left">
+                                <div class="material-icon">
+                                    <i class="bi bi-box-seam"></i>
+                                </div>
+                                <div>
+                                    <div class="material-name">{{ $stock->material_name }}</div>
+                                    <div class="material-subtext">Closing stock</div>
+                                </div>
+                            </div>
+
+                            <div class="material-value">
+                                {{ number_format($stock->quantity, 2, ',', '.') }} {{ $stock->unit }}
+                            </div>
+                        </div>
+                    @empty
+                        <div class="material-empty">Belum ada data stock.</div>
+                    @endforelse
+                </div>
             </div>
 
             <div class="panel-card span-4">
                 <div class="panel-header">
                     <div>
                         <h3 class="panel-title">Penerimaan Material</h3>
-                        <p class="panel-subtitle">Total penerimaan: {{ number_format($totalReceipt, 2, ',', '.') }}</p>
+                        <p class="panel-subtitle">
+                            Data 00.00 s/d 24.00 • Total: {{ number_format($totalReceipt, 2, ',', '.') }}
+                        </p>
                     </div>
                 </div>
 
-                <table class="table-modern">
-                    <thead>
-                        <tr>
-                            <th>Material</th>
-                            <th>Qty</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($todayReport->materialReceipts as $receipt)
-                            <tr>
-                                <td>{{ $receipt->material_name }}</td>
-                                <td>{{ number_format($receipt->quantity, 2, ',', '.') }} {{ $receipt->unit }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="2">Belum ada data penerimaan</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                <div class="material-list">
+                    @forelse($todayReport->materialReceipts as $receipt)
+                        <div class="material-item">
+                            <div class="material-left">
+                                <div class="material-icon">
+                                    <i class="bi bi-arrow-down-circle"></i>
+                                </div>
+                                <div>
+                                    <div class="material-name">{{ $receipt->material_name }}</div>
+                                    <div class="material-subtext">Material masuk</div>
+                                </div>
+                            </div>
+
+                            <div class="material-value blue">
+                                {{ number_format($receipt->quantity, 2, ',', '.') }} {{ $receipt->unit }}
+                            </div>
+                        </div>
+                    @empty
+                        <div class="material-empty">Belum ada data penerimaan.</div>
+                    @endforelse
+                </div>
+            </div>
+            <div class="panel-card span-4">
+                <div class="panel-header">
+                    <div>
+                        <h3 class="panel-title">Intransit Material</h3>
+                        <p class="panel-subtitle">
+                            Berdasarkan penerimaan material 00.00 s/d 24.00
+                        </p>
+                    </div>
+                </div>
+
+                <div class="material-list">
+                    @forelse($todayReport->materialReceipts as $receipt)
+                        <div class="material-item">
+                            <div class="material-left">
+                                <div class="material-icon">
+                                    <i class="bi bi-truck"></i>
+                                </div>
+                                <div>
+                                    <div class="material-name">{{ $receipt->material_name }}</div>
+                                    <div class="material-subtext">Intransit material</div>
+                                </div>
+                            </div>
+
+                            <div class="material-value yellow">
+                                {{ number_format($receipt->quantity, 2, ',', '.') }} {{ $receipt->unit }}
+                            </div>
+                        </div>
+                    @empty
+                        <div class="material-empty">Belum ada data intransit material.</div>
+                    @endforelse
+                </div>
             </div>
 
             <div class="panel-card span-4">
                 <div class="panel-header">
                     <div>
                         <h3 class="panel-title">Pemakaian/Pengeluaran</h3>
-                        <p class="panel-subtitle">Total pemakaian: {{ number_format($totalUsage, 2, ',', '.') }}</p>
+                        <p class="panel-subtitle">
+                            Total pemakaian: {{ number_format($totalUsage, 2, ',', '.') }}
+                        </p>
                     </div>
                 </div>
 
-                <table class="table-modern">
-                    <thead>
-                        <tr>
-                            <th>Material</th>
-                            <th>Qty</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($todayReport->materialUsages as $usage)
-                            <tr>
-                                <td>{{ $usage->material_name }}</td>
-                                <td>{{ number_format($usage->quantity, 2, ',', '.') }} {{ $usage->unit }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="2">Belum ada data pemakaian</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                <div class="material-list">
+                    @forelse($todayReport->materialUsages as $usage)
+                        <div class="material-item">
+                            <div class="material-left">
+                                <div class="material-icon">
+                                    <i class="bi bi-arrow-up-circle"></i>
+                                </div>
+                                <div>
+                                    <div class="material-name">{{ $usage->material_name }}</div>
+                                    <div class="material-subtext">Material terpakai</div>
+                                </div>
+                            </div>
+
+                            <div class="material-value green">
+                                {{ number_format($usage->quantity, 2, ',', '.') }} {{ $usage->unit }}
+                            </div>
+                        </div>
+                    @empty
+                        <div class="material-empty">Belum ada data pemakaian.</div>
+                    @endforelse
+                </div>
+            </div>
+            <div class="panel-card span-6">
+                <div class="panel-header">
+                    <div>
+                        <h3 class="panel-title">Ketahanan Stock</h3>
+                        <p class="panel-subtitle">
+                            Estimasi berdasarkan rata-rata pemakaian bulan berjalan
+                        </p>
+                    </div>
+                </div>
+
+                <div class="material-list">
+                    @forelse($stockResistance as $item)
+                        <div class="material-item">
+                            <div class="material-left">
+                                <div class="material-icon">
+                                    <i class="bi bi-hourglass-split"></i>
+                                </div>
+                                <div>
+                                    <div class="material-name">{{ $item['material_name'] }}</div>
+                                    <div class="material-subtext">
+                                        Stock: {{ number_format($item['stock'], 2, ',', '.') }} {{ $item['unit'] }}
+                                        • Avg: {{ number_format($item['average_usage'], 2, ',', '.') }}/hari
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="material-value">
+                                @if ($item['resistance_days'] > 0)
+                                    {{ number_format($item['resistance_days'], 1, ',', '.') }} Hari
+                                @else
+                                    -
+                                @endif
+                            </div>
+                        </div>
+                    @empty
+                        <div class="material-empty">Belum ada data ketahanan stock.</div>
+                    @endforelse
+                </div>
             </div>
 
             <div class="panel-card span-6">
@@ -285,17 +363,26 @@
                     </div>
                 </div>
 
-                <div class="metric-stack">
+                <div class="pretty-list">
                     @forelse($todayReport->bagStocks as $bag)
-                        <div class="metric-row">
-                            <span class="metric-label">{{ $bag->bag_type }}</span>
-                            <span class="metric-value">{{ number_format($bag->quantity, 0, ',', '.') }}
-                                {{ $bag->unit }}</span>
+                        <div class="pretty-list-item">
+                            <div class="pretty-list-left">
+                                <div class="pretty-icon soft-red">
+                                    <i class="bi bi-bag"></i>
+                                </div>
+                                <div>
+                                    <div class="pretty-label">{{ $bag->bag_type }}</div>
+                                    <div class="pretty-subtext">Jenis kantong</div>
+                                </div>
+                            </div>
+
+                            <div class="pretty-pill">
+                                {{ number_format($bag->quantity, 0, ',', '.') }} {{ $bag->unit }}
+                            </div>
                         </div>
                     @empty
-                        <div class="metric-row">
-                            <span class="metric-label">Belum ada data</span>
-                            <span class="metric-value">-</span>
+                        <div class="pretty-empty">
+                            Belum ada data stock kantong.
                         </div>
                     @endforelse
                 </div>
@@ -309,31 +396,95 @@
                     </div>
                 </div>
 
-                <div class="metric-stack">
-                    <div class="metric-row">
-                        <span class="metric-label">Feed</span>
-                        <span class="metric-value">{{ number_format($todayReport->feed, 2, ',', '.') }}</span>
+                <div class="pretty-list">
+                    <div class="pretty-list-item">
+                        <div class="pretty-list-left">
+                            <div class="pretty-icon soft-blue">
+                                <i class="bi bi-speedometer2"></i>
+                            </div>
+                            <div>
+                                <div class="pretty-label">Feed</div>
+                                <div class="pretty-subtext">Parameter umpan</div>
+                            </div>
+                        </div>
+                        <div class="pretty-pill">
+                            {{ number_format($todayReport->feed, 2, ',', '.') }}
+                        </div>
                     </div>
-                    <div class="metric-row">
-                        <span class="metric-label">Blaine</span>
-                        <span class="metric-value">{{ number_format($todayReport->blaine, 2, ',', '.') }}</span>
+
+                    <div class="pretty-list-item">
+                        <div class="pretty-list-left">
+                            <div class="pretty-icon soft-blue">
+                                <i class="bi bi-activity"></i>
+                            </div>
+                            <div>
+                                <div class="pretty-label">Blaine</div>
+                                <div class="pretty-subtext">Kehalusan semen</div>
+                            </div>
+                        </div>
+                        <div class="pretty-pill">
+                            {{ number_format($todayReport->blaine, 2, ',', '.') }}
+                        </div>
                     </div>
-                    <div class="metric-row">
-                        <span class="metric-label">Sieving</span>
-                        <span class="metric-value">{{ number_format($todayReport->sieving, 2, ',', '.') }}</span>
+
+                    <div class="pretty-list-item">
+                        <div class="pretty-list-left">
+                            <div class="pretty-icon soft-blue">
+                                <i class="bi bi-bar-chart-line"></i>
+                            </div>
+                            <div>
+                                <div class="pretty-label">Sieving</div>
+                                <div class="pretty-subtext">Nilai saringan</div>
+                            </div>
+                        </div>
+                        <div class="pretty-pill">
+                            {{ number_format($todayReport->sieving, 2, ',', '.') }}
+                        </div>
                     </div>
-                    <div class="metric-row">
-                        <span class="metric-label">Running Hours</span>
-                        <span class="metric-value">{{ number_format($todayReport->running_hours, 2, ',', '.') }}
-                            Jam</span>
+
+                    <div class="pretty-list-item">
+                        <div class="pretty-list-left">
+                            <div class="pretty-icon soft-yellow">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                            <div>
+                                <div class="pretty-label">Running Hours</div>
+                                <div class="pretty-subtext">Jam operasi</div>
+                            </div>
+                        </div>
+                        <div class="pretty-pill">
+                            {{ number_format($todayReport->running_hours, 2, ',', '.') }} Jam
+                        </div>
                     </div>
-                    <div class="metric-row">
-                        <span class="metric-label">Clinker Factor</span>
-                        <span class="metric-value">{{ number_format($todayReport->clinker_factor, 2, ',', '.') }}</span>
+
+                    <div class="pretty-list-item">
+                        <div class="pretty-list-left">
+                            <div class="pretty-icon soft-purple">
+                                <i class="bi bi-sliders"></i>
+                            </div>
+                            <div>
+                                <div class="pretty-label">Clinker Factor</div>
+                                <div class="pretty-subtext">Faktor clinker</div>
+                            </div>
+                        </div>
+                        <div class="pretty-pill">
+                            {{ number_format($todayReport->clinker_factor, 2, ',', '.') }}
+                        </div>
                     </div>
-                    <div class="metric-row">
-                        <span class="metric-label">Silo Semen</span>
-                        <span class="metric-value">{{ number_format($todayReport->silo_semen, 2, ',', '.') }} Ton</span>
+
+                    <div class="pretty-list-item">
+                        <div class="pretty-list-left">
+                            <div class="pretty-icon soft-green">
+                                <i class="bi bi-database"></i>
+                            </div>
+                            <div>
+                                <div class="pretty-label">Silo Semen</div>
+                                <div class="pretty-subtext">Persediaan di silo</div>
+                            </div>
+                        </div>
+                        <div class="pretty-pill">
+                            {{ number_format($todayReport->silo_semen, 2, ',', '.') }} Ton
+                        </div>
                     </div>
                 </div>
             </div>

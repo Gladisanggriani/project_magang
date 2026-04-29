@@ -6,7 +6,7 @@
 <div class="page-card">
     <h2 class="page-card-title">Laporan Nuansa Harian</h2>
     <p class="page-card-subtitle">
-        Input data operasional harian GP Dumai. Data yang disimpan akan masuk ke database MySQL dan ditampilkan pada dashboard.
+        Input data operasional harian GP Dumai.
     </p>
 </div>
 
