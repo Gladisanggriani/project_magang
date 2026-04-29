@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DailyReportController;
+use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,6 +24,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['role:admin'])->group(function () {
         Route::delete('/reports/{report}', [DailyReportController::class, 'destroy'])->name('reports.destroy');
+
+        Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
+        Route::get('/users/{user}/edit', [UserManagementController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{user}', [UserManagementController::class, 'update'])->name('users.update');
     });
 
     Route::get('/reports/{report}', [DailyReportController::class, 'show'])->name('reports.show');

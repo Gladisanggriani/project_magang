@@ -54,6 +54,13 @@
                     </a>
                 @endif
 
+                {{-- @if (auth()->user()->hasRole('admin'))
+                    <a href="{{ route('users.index') }}"
+                        class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
+                        Manajemen User
+                    </a>
+                @endif --}}
+
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="btn-logout">Logout</button>
@@ -67,7 +74,11 @@
                     {{ session('success') }}
                 </div>
             @endif
-
+            @if (session('error'))
+                <div class="alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
             @yield('content')
         </main>
     </div>

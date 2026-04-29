@@ -22,10 +22,9 @@
 
             $statusClass = function ($status) {
                 return match (strtoupper($status ?? '')) {
-                    'RUN' => 'status-badge status-success',
-                    'STOP' => 'status-badge status-danger',
+                    'RUN', 'READY' => 'status-badge status-success',
+                    'STOP', 'TROUBLE' => 'status-badge status-danger',
                     'MAINTENANCE' => 'status-badge status-warning',
-                    'TROUBLE' => 'status-badge status-danger',
                     default => 'status-badge status-neutral',
                 };
             };
@@ -40,13 +39,19 @@
                 <h1 class="hero-title">OPERASIONAL GP DUMAI</h1>
                 <p class="hero-subtitle">
                     Monitoring data produksi, stock material, status mesin, dan aktivitas packer harian.
+                    @if (\Carbon\Carbon::parse($todayReport->report_date)->toDateString() !== now()->toDateString())
+                        <br>
+                        <small>
+                            Catatan: belum ada laporan untuk hari ini, dashboard menampilkan data laporan terakhir.
+                        </small>
+                    @endif
                 </p>
             </div>
 
             <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
                 <div class="hero-date">
                     <i class="bi bi-calendar-event"></i>
-                    {{ \Carbon\Carbon::parse($todayReport->report_date)->format('d F Y') }}
+                    Data laporan: {{ \Carbon\Carbon::parse($todayReport->report_date)->format('d F Y') }}
                 </div>
 
                 @if (auth()->user()->hasRole(['admin', 'operator']))
@@ -61,7 +66,7 @@
             <article class="stat-card">
                 <div class="stat-top">
                     <div>
-                        <p class="stat-title">Produksi Cement Mill</p>
+                        <p class="stat-title">Produksi Semen </p>
                         <h3 class="stat-value">
                             {{ number_format($todayReport->production_cm, 2, ',', '.') }}
                             <span>Ton</span>
@@ -95,7 +100,7 @@
             <article class="stat-card">
                 <div class="stat-top">
                     <div>
-                        <p class="stat-title">Closing Stock Semen</p>
+                        <p class="stat-title">Closing Stock </p>
                         <h3 class="stat-value">
                             {{ number_format($getStock('Semen'), 2, ',', '.') }}
                             <span>Ton</span>
@@ -245,7 +250,7 @@
             <div class="panel-card span-4">
                 <div class="panel-header">
                     <div>
-                        <h3 class="panel-title">Pemakaian Material</h3>
+                        <h3 class="panel-title">Pemakaian/Pengeluaran</h3>
                         <p class="panel-subtitle">Total pemakaian: {{ number_format($totalUsage, 2, ',', '.') }}</p>
                     </div>
                 </div>

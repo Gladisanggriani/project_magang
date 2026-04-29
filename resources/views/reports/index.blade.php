@@ -104,11 +104,11 @@
                 <thead>
                     <tr>
                         <th>Tanggal</th>
-                        <th>Produksi CM</th>
-                        <th>Produksi Packer</th>
-                        <th>Status Mill</th>
-                        <th>Packer 1</th>
-                        <th>Packer 2</th>
+                        <th>Produksi CM 00-07</th>
+                        <th>Total Produksi Packer</th>
+                        <th>Operational Mill</th>
+                        <th>Kondisi Packer 1</th>
+                        <th>Kondisi Packer 2</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>

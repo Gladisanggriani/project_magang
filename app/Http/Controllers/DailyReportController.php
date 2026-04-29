@@ -44,9 +44,7 @@ class DailyReportController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'report_date' => 'required|date|unique:daily_reports,report_date',
-        ]);
+        $this->validateReport($request);
 
         DB::transaction(function () use ($request) {
             $report = DailyReport::create([
@@ -102,9 +100,7 @@ class DailyReportController extends Controller
 
     public function update(Request $request, DailyReport $report)
     {
-        $request->validate([
-            'report_date' => 'required|date|unique:daily_reports,report_date,' . $report->id,
-        ]);
+        $this->validateReport($request, $report);
 
         DB::transaction(function () use ($request, $report) {
             $report->update([
@@ -182,5 +178,65 @@ class DailyReportController extends Controller
                 'unit' => 'lembar',
             ]);
         }
+    }
+
+    private function validateReport(Request $request, ?DailyReport $report = null): array
+    {
+        $reportId = $report ? $report->id : null;
+
+        return $request->validate([
+            'report_date' => 'required|date|unique:daily_reports,report_date,' . $reportId,
+
+            'cement_mill_status' => 'required|in:RUN,STOP,MAINTENANCE,TROUBLE',
+            'packer1_status' => 'required|in:READY,MAINTENANCE,STOP,TROUBLE',
+            'packer2_status' => 'required|in:READY,MAINTENANCE,STOP,TROUBLE',
+
+            'cement_mill_note' => 'nullable|string|max:255',
+            'packer1_note' => 'nullable|string|max:255',
+            'packer2_note' => 'nullable|string|max:255',
+
+            'feed' => 'nullable|numeric|min:0',
+            'blaine' => 'nullable|numeric|min:0',
+            'sieving' => 'nullable|numeric|min:0',
+            'production_cm' => 'nullable|numeric|min:0',
+            'running_hours' => 'nullable|numeric|min:0',
+            'clinker_factor' => 'nullable|numeric|min:0',
+            'silo_semen' => 'nullable|numeric|min:0',
+
+            'truck_packer_area' => 'nullable|integer|min:0',
+            'truck_emplacement_area' => 'nullable|integer|min:0',
+            'production_packer' => 'nullable|numeric|min:0',
+
+            'stocks' => 'nullable|array',
+            'stocks.*' => 'nullable|numeric|min:0',
+
+            'receipts' => 'nullable|array',
+            'receipts.*' => 'nullable|numeric|min:0',
+
+            'usages' => 'nullable|array',
+            'usages.*' => 'nullable|numeric|min:0',
+
+            'bags' => 'nullable|array',
+            'bags.*' => 'nullable|numeric|min:0',
+        ], [
+            'report_date.required' => 'Tanggal laporan wajib diisi.',
+            'report_date.date' => 'Format tanggal laporan tidak valid.',
+            'report_date.unique' => 'Laporan untuk tanggal ini sudah ada.',
+
+            'cement_mill_status.required' => 'Operational Cement Mill wajib dipilih.',
+            'cement_mill_status.in' => 'Operational Cement Mill tidak valid.',
+
+            'packer1_status.required' => 'Kondisi Packer 1 wajib dipilih.',
+            'packer1_status.in' => 'Kondisi Packer 1 tidak valid.',
+
+            'packer2_status.required' => 'Kondisi Packer 2 wajib dipilih.',
+            'packer2_status.in' => 'Kondisi Packer 2 tidak valid.',
+
+            '*.numeric' => 'Input angka harus berupa angka yang valid.',
+            '*.min' => 'Input angka tidak boleh bernilai minus.',
+
+            'truck_packer_area.integer' => 'Jumlah truk area packer harus berupa bilangan bulat.',
+            'truck_emplacement_area.integer' => 'Jumlah truk area emplacement harus berupa bilangan bulat.',
+        ]);
     }
 }
