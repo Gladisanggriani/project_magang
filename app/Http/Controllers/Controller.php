@@ -6,3 +6,4 @@ abstract class Controller
 {
     //
 }
+use Illuminate\Http\JsonResponse;

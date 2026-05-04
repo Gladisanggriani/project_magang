@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DailyReport;
 use App\Models\MaterialUsage;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 
 class DashboardController extends Controller
 {
@@ -26,6 +27,14 @@ class DashboardController extends Controller
                 'materialUsages',
                 'bagStocks'
             ])->latest('report_date')->first();
+        }
+
+        $previousReport = null;
+
+        if ($todayReport) {
+            $previousReport = DailyReport::where('report_date', '<', $todayReport->report_date)
+                ->orderByDesc('report_date')
+                ->first();
         }
 
         $startOfMonth = Carbon::now()->startOfMonth();
@@ -51,13 +60,6 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         | Rumus:
         | Ketahanan Stock = Closing Stock / Rata-rata Pemakaian Harian
-        |
-        | Contoh:
-        | Stock Klinker = 10.000 ton
-        | Total pemakaian Klinker bulan ini = 20.000 ton
-        | Hari berjalan = 10 hari
-        | Rata-rata pemakaian = 20.000 / 10 = 2.000 ton/hari
-        | Ketahanan stock = 10.000 / 2.000 = 5 hari
         */
         $stockResistance = [];
 
@@ -82,29 +84,27 @@ class DashboardController extends Controller
                 ];
             }
         }
-        $siloCapacity = 1000; // ganti sesuai kapasitas silo asli
-        $siloValue = $todayReport ? ($todayReport->silo_semen ?? 0) : 0;
 
-        $siloPercentage = $siloCapacity > 0 ? ($siloValue / $siloCapacity) * 100 : 0;
-        $siloPercentage = max(0, min(100, $siloPercentage));
-        $previousSiloValue = 0;
-        $siloTrend = 'stable';
+        /*
+        |--------------------------------------------------------------------------
+        | Silo Premium
+        |--------------------------------------------------------------------------
+        */
+        $silos = $this->buildSilos($todayReport, $previousReport);
 
-        if ($todayReport) {
-            $previousReport = DailyReport::where('report_date', '<', $todayReport->report_date)
-                ->orderByDesc('report_date')
-                ->first();
+        /*
+        |--------------------------------------------------------------------------
+        | Variabel lama tetap dikirim agar blade lama tidak error
+        |--------------------------------------------------------------------------
+        */
+        $mainSilo = $silos[0] ?? null;
 
-            if ($previousReport) {
-                $previousSiloValue = $previousReport->silo_semen ?? 0;
+        $siloCapacity = $mainSilo['capacity'] ?? 1000;
+        $siloValue = $mainSilo['value'] ?? 0;
+        $siloPercentage = $mainSilo['percentage'] ?? 0;
+        $previousSiloValue = $mainSilo['previous_value'] ?? 0;
+        $siloTrend = $mainSilo['trend'] ?? 'stable';
 
-                if ($siloValue > $previousSiloValue) {
-                    $siloTrend = 'up';
-                } elseif ($siloValue < $previousSiloValue) {
-                    $siloTrend = 'down';
-                }
-            }
-        }
         return view('dashboard.index', compact(
             'todayReport',
             'mtdProductionCm',
@@ -113,11 +113,117 @@ class DashboardController extends Controller
             'avgProductionPacker',
             'chartReports',
             'stockResistance',
+            'silos',
             'siloCapacity',
             'siloValue',
             'siloPercentage',
             'previousSiloValue',
             'siloTrend'
         ));
+    }
+
+    public function siloData(): JsonResponse
+    {
+        $today = Carbon::today();
+
+        $todayReport = DailyReport::whereDate('report_date', $today)->first();
+
+        if (!$todayReport) {
+            $todayReport = DailyReport::latest('report_date')->first();
+        }
+
+        $previousReport = null;
+
+        if ($todayReport) {
+            $previousReport = DailyReport::where('report_date', '<', $todayReport->report_date)
+                ->orderByDesc('report_date')
+                ->first();
+        }
+
+        return response()->json([
+            'silos' => $this->buildSilos($todayReport, $previousReport),
+            'updated_at' => now()->format('H:i:s'),
+        ]);
+    }
+
+    private function resolveSiloLevel(float $percentage): array
+    {
+        if ($percentage <= 30) {
+            return [
+                'text' => 'Rendah',
+                'class' => 'level-low',
+            ];
+        }
+
+        if ($percentage <= 70) {
+            return [
+                'text' => 'Sedang',
+                'class' => 'level-medium',
+            ];
+        }
+
+        return [
+            'text' => 'Tinggi',
+            'class' => 'level-high',
+        ];
+    }
+
+    private function buildSilos(?DailyReport $todayReport, ?DailyReport $previousReport): array
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | Konfigurasi Silo
+        |--------------------------------------------------------------------------
+        | Saat ini database kamu baru punya field silo_semen.
+        | Kalau nanti ada Silo 1, Silo 2, Silo 3, tinggal tambah config di sini.
+        |
+        | Capacity 1000 ini sementara. Nanti ganti sesuai kapasitas asli silo.
+        */
+        $configs = [
+            [
+                'code' => 'silo_semen',
+                'label' => 'Silo Semen',
+                'field' => 'silo_semen',
+                'capacity' => 900000,
+                'unit' => 'Ton',
+            ],
+        ];
+
+        return collect($configs)->map(function ($config) use ($todayReport, $previousReport) {
+            $value = $todayReport ? (float) ($todayReport->{$config['field']} ?? 0) : 0;
+            $previousValue = $previousReport ? (float) ($previousReport->{$config['field']} ?? 0) : $value;
+
+            $percentage = $config['capacity'] > 0 ? ($value / $config['capacity']) * 100 : 0;
+            $percentage = max(0, min(100, $percentage));
+
+            $trend = 'stable';
+
+            if ($value > $previousValue) {
+                $trend = 'up';
+            } elseif ($value < $previousValue) {
+                $trend = 'down';
+            }
+
+            $level = $this->resolveSiloLevel($percentage);
+
+            return [
+                'code' => $config['code'],
+                'label' => $config['label'],
+                'field' => $config['field'],
+                'value' => $value,
+                'previous_value' => $previousValue,
+                'capacity' => (float) $config['capacity'],
+                'unit' => $config['unit'],
+                'percentage' => round($percentage, 1),
+                'trend' => $trend,
+                'delta' => round($value - $previousValue, 2),
+                'level_text' => $level['text'],
+                'level_class' => $level['class'],
+                'formatted_value' => number_format($value, 2, ',', '.') . ' ' . $config['unit'],
+                'formatted_capacity' => number_format((float) $config['capacity'], 2, ',', '.') . ' ' . $config['unit'],
+                'formatted_percentage' => number_format($percentage, 1, ',', '.') . '%',
+                'formatted_delta' => number_format(abs($value - $previousValue), 2, ',', '.') . ' ' . $config['unit'],
+            ];
+        })->values()->all();
     }
 }

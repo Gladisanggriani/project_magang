@@ -145,73 +145,7 @@
                     <canvas id="productionChart"></canvas>
                 </div>
             </div>
-            <div class="panel-card span-4">
-                <div class="panel-header">
-                    <div>
-                        <h3 class="panel-title">Level Silo Semen</h3>
-                        <p class="panel-subtitle">Visual kapasitas silo secara real-time</p>
-                    </div>
-                </div>
-
-                <div class="silo-widget">
-                    <div class="silo-wrapper">
-                        <div class="silo-visual">
-                            <div class="silo-scale">
-                                <span>100%</span>
-                                <span>75%</span>
-                                <span>50%</span>
-                                <span>25%</span>
-                                <span>0%</span>
-                            </div>
-
-                            <div class="silo-tank">
-                                <div class="silo-top"></div>
-
-                                <div class="silo-shell">
-                                    <div class="silo-fill {{ $siloTrend === 'up' ? 'fill-up' : ($siloTrend === 'down' ? 'fill-down' : '') }}"
-                                        style="height: {{ $siloPercentage }}%;">
-                                        <div class="silo-liquid-wave"></div>
-                                    </div>
-                                </div>
-
-                                <div class="silo-bottom"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="silo-info">
-                        <div class="silo-info-item">
-                            <span class="silo-info-label">Isi Saat Ini</span>
-                            <span class="silo-info-value">{{ number_format($siloValue, 2, ',', '.') }} Ton</span>
-                        </div>
-
-                        <div class="silo-info-item">
-                            <span class="silo-info-label">Kapasitas</span>
-                            <span class="silo-info-value">{{ number_format($siloCapacity, 2, ',', '.') }} Ton</span>
-                        </div>
-
-                        <div class="silo-info-item">
-                            <span class="silo-info-label">Level</span>
-                            <span class="silo-info-value">{{ number_format($siloPercentage, 1, ',', '.') }}%</span>
-                        </div>
-
-                        <div class="silo-info-item">
-                            <span class="silo-info-label">Trend</span>
-                            <span class="silo-info-value">
-                                @if ($siloTrend === 'up')
-                                    <span class="trend-up">Naik</span>
-                                @elseif($siloTrend === 'down')
-                                    <span class="trend-down">Turun</span>
-                                @else
-                                    <span class="trend-stable">Stabil</span>
-                                @endif
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="panel-card span-4">
+                        <div class="panel-card span-4">
                 <div class="panel-header">
                     <div>
                         <h3 class="panel-title">Status Mesin</h3>
@@ -251,6 +185,122 @@
                     </div>
                 </div>
             </div>
+            <div class="panel-card span-12">
+                <div class="panel-header">
+                    <div>
+                        <h3 class="panel-title">Monitoring Level Silo Semen</h3>
+                        <p class="panel-subtitle">
+                            Visual level silo otomatis, responsif, dan memantau tren naik/turun
+                        </p>
+                    </div>
+
+                    <div class="silo-last-update">
+                        Update otomatis: <span id="silo-last-update-time">-</span>
+                    </div>
+                </div>
+
+                <div class="premium-silo-grid">
+                    @forelse($silos as $silo)
+                        <div class="premium-silo-card" data-silo-code="{{ $silo['code'] }}">
+                            <div class="premium-silo-card-top">
+                                <div>
+                                    <h4 class="premium-silo-name">{{ $silo['label'] }}</h4>
+                                    <p class="premium-silo-desc">Visual level kapasitas silo</p>
+                                </div>
+
+                                <div class="premium-silo-badges">
+                                    <span class="silo-chip silo-level-chip {{ $silo['level_class'] }}"
+                                        data-field="level_text">
+                                        {{ $silo['level_text'] }}
+                                    </span>
+
+                                    <span class="silo-chip silo-trend-chip trend-{{ $silo['trend'] }}"
+                                        data-field="trend_text">
+                                        @if ($silo['trend'] === 'up')
+                                            Naik
+                                        @elseif($silo['trend'] === 'down')
+                                            Turun
+                                        @else
+                                            Stabil
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="premium-silo-body">
+                                <div class="premium-silo-visual-wrap">
+                                    <div class="premium-silo-scale">
+                                        <span>100%</span>
+                                        <span>75%</span>
+                                        <span>50%</span>
+                                        <span>25%</span>
+                                        <span>0%</span>
+                                    </div>
+
+                                    <div class="premium-silo-visual">
+                                        <div class="premium-silo-cap"></div>
+
+                                        <div class="premium-silo-shell">
+                                            <div class="premium-silo-fill {{ $silo['level_class'] }}" data-field="fill"
+                                                style="height: {{ $silo['percentage'] }}%;">
+                                                <div class="premium-silo-wave"></div>
+                                                <div class="premium-silo-percent-label" data-field="percentage_badge">
+                                                    {{ $silo['formatted_percentage'] }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="premium-silo-cone"></div>
+
+                                        <div class="premium-silo-legs">
+                                            <span></span>
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="premium-silo-stats">
+                                    <div class="premium-silo-stat-box">
+                                        <span class="stat-label">Isi Saat Ini</span>
+                                        <strong class="stat-value"
+                                            data-field="value">{{ $silo['formatted_value'] }}</strong>
+                                    </div>
+
+                                    <div class="premium-silo-stat-box">
+                                        <span class="stat-label">Kapasitas</span>
+                                        <strong class="stat-value"
+                                            data-field="capacity">{{ $silo['formatted_capacity'] }}</strong>
+                                    </div>
+
+                                    <div class="premium-silo-stat-box">
+                                        <span class="stat-label">Level</span>
+                                        <strong class="stat-value"
+                                            data-field="percentage">{{ $silo['formatted_percentage'] }}</strong>
+                                    </div>
+
+                                    <div class="premium-silo-stat-box">
+                                        <span class="stat-label">Selisih</span>
+                                        <strong class="stat-value" data-field="delta">
+                                            @if ($silo['trend'] === 'up')
+                                                +{{ $silo['formatted_delta'] }}
+                                            @elseif($silo['trend'] === 'down')
+                                                -{{ $silo['formatted_delta'] }}
+                                            @else
+                                                0,00 {{ $silo['unit'] }}
+                                            @endif
+                                        </strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="premium-silo-empty">
+                            Belum ada data silo untuk ditampilkan.
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
 
             <div class="panel-card span-4">
                 <div class="panel-header">
@@ -616,3 +666,101 @@
         </script>
     @endif
 @endsection
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const siloUrl = "{{ route('dashboard.silo-data') }}";
+    const lastUpdateEl = document.getElementById('silo-last-update-time');
+
+    function trendText(trend) {
+        if (trend === 'up') return 'Naik';
+        if (trend === 'down') return 'Turun';
+        return 'Stabil';
+    }
+
+    function updateTrendClass(el, trend) {
+        el.classList.remove('trend-up', 'trend-down', 'trend-stable');
+        el.classList.add('trend-' + trend);
+    }
+
+    function updateLevelClass(el, levelClass) {
+        el.classList.remove('level-low', 'level-medium', 'level-high');
+        el.classList.add(levelClass);
+    }
+
+    async function refreshSiloData() {
+        try {
+            const response = await fetch(siloUrl, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            const result = await response.json();
+
+            if (lastUpdateEl && result.updated_at) {
+                lastUpdateEl.textContent = result.updated_at;
+            }
+
+            if (!result.silos || !Array.isArray(result.silos)) {
+                return;
+            }
+
+            result.silos.forEach((silo) => {
+                const card = document.querySelector(`[data-silo-code="${silo.code}"]`);
+                if (!card) return;
+
+                const fill = card.querySelector('[data-field="fill"]');
+                const levelText = card.querySelector('[data-field="level_text"]');
+                const trendTextEl = card.querySelector('[data-field="trend_text"]');
+                const valueEl = card.querySelector('[data-field="value"]');
+                const capacityEl = card.querySelector('[data-field="capacity"]');
+                const percentageEl = card.querySelector('[data-field="percentage"]');
+                const percentageBadgeEl = card.querySelector('[data-field="percentage_badge"]');
+                const deltaEl = card.querySelector('[data-field="delta"]');
+
+                if (fill) {
+                    fill.style.height = silo.percentage + '%';
+                    updateLevelClass(fill, silo.level_class);
+                }
+
+                if (levelText) {
+                    levelText.textContent = silo.level_text;
+                    updateLevelClass(levelText, silo.level_class);
+                }
+
+                if (trendTextEl) {
+                    trendTextEl.textContent = trendText(silo.trend);
+                    updateTrendClass(trendTextEl, silo.trend);
+                }
+
+                if (valueEl) valueEl.textContent = silo.formatted_value;
+                if (capacityEl) capacityEl.textContent = silo.formatted_capacity;
+                if (percentageEl) percentageEl.textContent = silo.formatted_percentage;
+                if (percentageBadgeEl) percentageBadgeEl.textContent = silo.formatted_percentage;
+
+                if (deltaEl) {
+                    if (silo.trend === 'up') {
+                        deltaEl.textContent = '+' + silo.formatted_delta;
+                    } else if (silo.trend === 'down') {
+                        deltaEl.textContent = '-' + silo.formatted_delta;
+                    } else {
+                        deltaEl.textContent = '0,00 ' + silo.unit;
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Gagal memuat data silo:', error);
+        }
+    }
+
+    refreshSiloData();
+    setInterval(refreshSiloData, 10000); // update tiap 10 detik
+});
+</script>
+@endpush

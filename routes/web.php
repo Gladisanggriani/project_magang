@@ -31,6 +31,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::get('/reports/{report}', [DailyReportController::class, 'show'])->name('reports.show');
+    Route::get('/dashboard/silo-data', [DashboardController::class, 'siloData'])->name('dashboard.silo-data');
 });
 
 require __DIR__.'/auth.php';
