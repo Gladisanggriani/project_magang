@@ -145,6 +145,71 @@
                     <canvas id="productionChart"></canvas>
                 </div>
             </div>
+            <div class="panel-card span-4">
+                <div class="panel-header">
+                    <div>
+                        <h3 class="panel-title">Level Silo Semen</h3>
+                        <p class="panel-subtitle">Visual kapasitas silo secara real-time</p>
+                    </div>
+                </div>
+
+                <div class="silo-widget">
+                    <div class="silo-wrapper">
+                        <div class="silo-visual">
+                            <div class="silo-scale">
+                                <span>100%</span>
+                                <span>75%</span>
+                                <span>50%</span>
+                                <span>25%</span>
+                                <span>0%</span>
+                            </div>
+
+                            <div class="silo-tank">
+                                <div class="silo-top"></div>
+
+                                <div class="silo-shell">
+                                    <div class="silo-fill {{ $siloTrend === 'up' ? 'fill-up' : ($siloTrend === 'down' ? 'fill-down' : '') }}"
+                                        style="height: {{ $siloPercentage }}%;">
+                                        <div class="silo-liquid-wave"></div>
+                                    </div>
+                                </div>
+
+                                <div class="silo-bottom"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="silo-info">
+                        <div class="silo-info-item">
+                            <span class="silo-info-label">Isi Saat Ini</span>
+                            <span class="silo-info-value">{{ number_format($siloValue, 2, ',', '.') }} Ton</span>
+                        </div>
+
+                        <div class="silo-info-item">
+                            <span class="silo-info-label">Kapasitas</span>
+                            <span class="silo-info-value">{{ number_format($siloCapacity, 2, ',', '.') }} Ton</span>
+                        </div>
+
+                        <div class="silo-info-item">
+                            <span class="silo-info-label">Level</span>
+                            <span class="silo-info-value">{{ number_format($siloPercentage, 1, ',', '.') }}%</span>
+                        </div>
+
+                        <div class="silo-info-item">
+                            <span class="silo-info-label">Trend</span>
+                            <span class="silo-info-value">
+                                @if ($siloTrend === 'up')
+                                    <span class="trend-up">Naik</span>
+                                @elseif($siloTrend === 'down')
+                                    <span class="trend-down">Turun</span>
+                                @else
+                                    <span class="trend-stable">Stabil</span>
+                                @endif
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="panel-card span-4">
                 <div class="panel-header">

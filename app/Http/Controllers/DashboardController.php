@@ -82,7 +82,29 @@ class DashboardController extends Controller
                 ];
             }
         }
+        $siloCapacity = 1000; // ganti sesuai kapasitas silo asli
+        $siloValue = $todayReport ? ($todayReport->silo_semen ?? 0) : 0;
 
+        $siloPercentage = $siloCapacity > 0 ? ($siloValue / $siloCapacity) * 100 : 0;
+        $siloPercentage = max(0, min(100, $siloPercentage));
+        $previousSiloValue = 0;
+        $siloTrend = 'stable';
+
+        if ($todayReport) {
+            $previousReport = DailyReport::where('report_date', '<', $todayReport->report_date)
+                ->orderByDesc('report_date')
+                ->first();
+
+            if ($previousReport) {
+                $previousSiloValue = $previousReport->silo_semen ?? 0;
+
+                if ($siloValue > $previousSiloValue) {
+                    $siloTrend = 'up';
+                } elseif ($siloValue < $previousSiloValue) {
+                    $siloTrend = 'down';
+                }
+            }
+        }
         return view('dashboard.index', compact(
             'todayReport',
             'mtdProductionCm',
@@ -90,7 +112,12 @@ class DashboardController extends Controller
             'avgProductionCm',
             'avgProductionPacker',
             'chartReports',
-            'stockResistance'
+            'stockResistance',
+            'siloCapacity',
+            'siloValue',
+            'siloPercentage',
+            'previousSiloValue',
+            'siloTrend'
         ));
     }
 }
