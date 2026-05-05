@@ -123,23 +123,35 @@
                             <td>{{ $report->packer2_status }}</td>
                             <td>
                                 <div class="table-actions">
-                                    <a href="{{ route('reports.show', $report->id) }}" class="btn-secondary">
-                                        <i class="bi bi-eye"></i> Detail
+                                    <a href="{{ route('reports.show', $report->id) }}" class="btn-action-table btn-view">
+                                        <i class="bi bi-eye"></i>
+                                        <span>Detail</span>
                                     </a>
 
                                     @if (auth()->user()->hasRole(['admin', 'operator']))
-                                        <a href="{{ route('reports.edit', $report->id) }}" class="btn-primary">
-                                            <i class="bi bi-pencil-square"></i> Edit
+                                        <a href="{{ route('reports.edit', $report->id) }}"
+                                            class="btn-action-table btn-edit">
+                                            <i class="bi bi-pencil-square"></i>
+                                            <span>Edit</span>
                                         </a>
                                     @endif
 
+                                    <a href="{{ route('reports.export-excel', $report->id) }}"
+                                        class="btn-action-table btn-excel">
+                                        <i class="bi bi-file-earmark-excel"></i>
+                                        <span>Excel</span>
+                                    </a>
+
                                     @if (auth()->user()->hasRole('admin'))
                                         <form action="{{ route('reports.destroy', $report->id) }}" method="POST"
+                                            class="delete-form"
                                             onsubmit="return confirm('Yakin ingin menghapus laporan ini? Data yang dihapus tidak bisa dikembalikan.');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn-danger">
-                                                <i class="bi bi-trash"></i> Hapus
+
+                                            <button type="submit" class="btn-action-table btn-delete">
+                                                <i class="bi bi-trash"></i>
+                                                <span>Hapus</span>
                                             </button>
                                         </form>
                                     @endif

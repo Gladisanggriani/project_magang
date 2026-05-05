@@ -239,4 +239,24 @@ class DailyReportController extends Controller
             'truck_emplacement_area.integer' => 'Jumlah truk area emplacement harus berupa bilangan bulat.',
         ]);
     }
+
+    public function exportExcel(DailyReport $report)
+    {
+        $report->load([
+            'materialStocks',
+            'materialReceipts',
+            'materialUsages',
+            'bagStocks',
+        ]);
+
+        $date = \Carbon\Carbon::parse($report->report_date)->format('Y-m-d');
+        $filename = 'laporan-harian-' . $date . '.xls';
+
+        $html = view('exports.daily-report-excel', compact('report'))->render();
+
+        return response($html)
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"')
+            ->header('Cache-Control', 'max-age=0');
+    }
 }

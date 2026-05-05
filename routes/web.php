@@ -11,6 +11,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/silo-data', [DashboardController::class, 'siloData'])->name('dashboard.silo-data');
 
     Route::get('/reports', [DailyReportController::class, 'index'])->name('reports.index');
 
@@ -30,8 +31,10 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/users/{user}', [UserManagementController::class, 'update'])->name('users.update');
     });
 
+    Route::get('/reports/{report}/export-excel', [DailyReportController::class, 'exportExcel'])
+        ->name('reports.export-excel');
+
     Route::get('/reports/{report}', [DailyReportController::class, 'show'])->name('reports.show');
-    Route::get('/dashboard/silo-data', [DashboardController::class, 'siloData'])->name('dashboard.silo-data');
 });
 
 require __DIR__.'/auth.php';
