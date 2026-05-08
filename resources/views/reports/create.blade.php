@@ -122,7 +122,7 @@
             </div>
 
             <div class="form-grid">
-                @foreach (['Klinker', 'Gypsum Natural', 'Gypsum Purified', 'Pozzolan', 'Wet Fly Ash', 'Dry Fly Ash', 'Limestone', 'Solar'] as $material)
+                @foreach (['Semen', 'Klinker', 'Gypsum', 'Gypsum Natural', 'Gypsum Purified', 'Pozzolan', 'Flyash Wet', 'Flyash Dry', 'Limestone', 'Solar'] as $material)
                     <div class="form-group">
                         <label>{{ $material }}</label>
                         <input type="number" step="0.01" min="0" name="stocks[{{ $material }}]"
