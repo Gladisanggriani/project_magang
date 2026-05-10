@@ -1,1 +1,1 @@
-git web: sh -c "php artisan migrate --force && vendor/bin/heroku-php-apache2 public/"
+web: sh -c "php artisan migrate --force && vendor/bin/heroku-php-apache2 public/"
