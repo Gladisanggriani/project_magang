@@ -1,52 +1,117 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Register - Dashboard Operasional GP Dumai</title>
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="login-page">
+        <div class="login-container">
+            <div class="login-left">
+                <div class="login-brand">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo PT Semen Padang" class="login-logo">
+                    <div>
+                        <h1>Dashboard Operasional GP Dumai</h1>
+                        <p>PT Semen Padang Unit Pabrik Dumai</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="login-right">
+                <div class="login-card">
+                    <div class="login-card-header">
+                        <h2>Daftar Akun</h2>
+                        <p>Silakan lengkapi data berikut untuk membuat akun baru.</p>
+                    </div>
+
+                    <form method="POST" action="{{ route('register') }}">
+                        @csrf
+
+                        {{-- <div class="login-form-group">
+                            <label for="name">Nama</label>
+                            <input
+                                id="name"
+                                type="text"
+                                name="name"
+                                value="{{ old('name') }}"
+                                required
+                                autofocus
+                                autocomplete="name"
+                                placeholder="Masukkan nama lengkap"
+                            >
+
+                            @error('name')
+                                <div class="login-error">{{ $message }}</div>
+                            @enderror
+                        </div> --}}
+
+                        <div class="login-form-group">
+                            <label for="email">Email</label>
+                            <input
+                                id="email"
+                                type="email"
+                                name="email"
+                                value="{{ old('email') }}"
+                                required
+                                autocomplete="username"
+                                placeholder="Masukkan email"
+                            >
+
+                            @error('email')
+                                <div class="login-error">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="login-form-group">
+                            <label for="password">Password</label>
+                            <input
+                                id="password"
+                                type="password"
+                                name="password"
+                                required
+                                autocomplete="new-password"
+                                placeholder="Masukkan password"
+                            >
+
+                            @error('password')
+                                <div class="login-error">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="login-form-group">
+                            <label for="password_confirmation">Konfirmasi Password</label>
+                            <input
+                                id="password_confirmation"
+                                type="password"
+                                name="password_confirmation"
+                                required
+                                autocomplete="new-password"
+                                placeholder="Ulangi password"
+                            >
+
+                            @error('password_confirmation')
+                                <div class="login-error">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <button type="submit" class="login-button">
+                            <i class="bi bi-person-plus"></i>
+                            Daftar
+                        </button>
+
+                        <div class="auth-switch-link">
+                            Sudah punya akun?
+                            <a href="{{ route('login') }}">Masuk di sini</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+    </div>
+</body>
+</html>
