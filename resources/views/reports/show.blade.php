@@ -48,8 +48,13 @@
                 <strong>{{ $report->cement_mill_status ?: '-' }}</strong>
             </div>
             <div>
-                <span>Produksi Cement Mill</span>
+                <span>Produksi Semen</span>
                 <strong>{{ number_format($report->production_cm, 2, ',', '.') }} Ton</strong>
+            </div>
+
+            <div>
+                <span>Produksi dari Kapal</span>
+                <strong>{{ number_format($report->production_ship ?? 0, 2, ',', '.') }} Ton</strong>
             </div>
             <div>
                 <span>Produksi Packer</span>
@@ -113,8 +118,13 @@
                         <td>-</td>
                     </tr>
                     <tr>
-                        <td>Silo Semen</td>
-                        <td>{{ number_format($report->silo_semen, 2, ',', '.') }} Ton</td>
+                        <td>Produksi Semen</td>
+                        <td>{{ number_format($report->production_cm, 2, ',', '.') }} Ton</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>Produksi dari Kapal</td>
+                        <td>{{ number_format($report->production_ship ?? 0, 2, ',', '.') }} Ton</td>
                         <td>-</td>
                     </tr>
                 </tbody>

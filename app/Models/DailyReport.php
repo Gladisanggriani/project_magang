@@ -17,6 +17,7 @@ class DailyReport extends Model
         'blaine',
         'sieving',
         'production_cm',
+        'production_ship',
         'running_hours',
         'clinker_factor',
         'silo_semen',
@@ -48,5 +49,9 @@ class DailyReport extends Model
     public function bagStocks()
     {
         return $this->hasMany(BagStock::class);
+    }
+    public function materialIntransits()
+    {
+        return $this->hasMany(MaterialIntransit::class);
     }
 }

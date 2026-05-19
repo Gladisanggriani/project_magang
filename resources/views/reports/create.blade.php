@@ -87,9 +87,24 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Produksi 00.00 s/d 07.00</label>
-                    <input type="number" step="0.01" min="0" name="production_cm"
-                        value="{{ old('production_cm') }}" placeholder="0.00">
+                    <label>Produksi Semen</label>
+                    <input type="text" inputmode="decimal" name="production_cm" value="{{ old('production_cm') }}"
+                        placeholder="Contoh: 2.520,78">
+                </div>
+
+                <div class="form-group">
+                    <label>Produksi dari Kapal</label>
+                    <input type="text" inputmode="decimal" name="production_ship" value="{{ old('production_ship') }}"
+                        placeholder="Contoh: 1.250,50">
+                </div>
+
+                <div class="form-group">
+                    <label>Produksi dari Kapal</label>
+                    <input type="text" inputmode="decimal" name="production_ship" value="{{ old('production_ship') }}"
+                        placeholder="Contoh: 2.520,78">
+                    @error('production_ship')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
                 </div>
 
                 <div class="form-group">
@@ -147,6 +162,30 @@
                         <label>{{ $material }}</label>
                         <input type="number" step="0.01" min="0" name="receipts[{{ $material }}]"
                             value="{{ old('receipts.' . $material) }}" placeholder="0.00">
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- INTRANSIT MATERIAL --}}
+        <div class="form-section">
+            <div class="form-section-title">
+                <div class="form-section-icon">
+                    <i class="bi bi-truck"></i>
+                </div>
+                <span>Intransit Material</span>
+            </div>
+
+            <div class="input-note">
+                Kosongkan material yang tidak memiliki data terbaru. Gunakan format angka Indonesia, contoh: 2.520,78.
+            </div>
+
+            <div class="form-grid">
+                @foreach (['Semen', 'Klinker', 'Limestone', 'Gypsum', 'Pozzolan', 'Fly Ash Dry SDS', 'Fly Ash Dry ESM', 'Fly Ash Dry IK', 'Fly Ash Dry SDO', 'Fly Ash Wet Tenayan', 'Fly Ash Wet RAPP'] as $material)
+                    <div class="form-group">
+                        <label>{{ $material }}</label>
+                        <input type="text" inputmode="decimal" name="intransits[{{ $material }}]"
+                            value="{{ old('intransits.' . $material) }}" placeholder="0,00">
                     </div>
                 @endforeach
             </div>

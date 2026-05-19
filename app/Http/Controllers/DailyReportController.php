@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BagStock;
 use App\Models\DailyReport;
+use App\Models\MaterialIntransit;
 use App\Models\MaterialReceipt;
 use App\Models\MaterialStock;
 use App\Models\MaterialUsage;
@@ -49,29 +50,37 @@ class DailyReportController extends Controller
         DB::transaction(function () use ($request) {
             $report = DailyReport::create([
                 'report_date' => $request->report_date,
+
                 'cement_mill_status' => $request->cement_mill_status,
                 'cement_mill_note' => $request->cement_mill_note,
-                'feed' => $request->feed ?? 0,
-                'blaine' => $request->blaine ?? 0,
-                'sieving' => $request->sieving ?? 0,
-                'production_cm' => $request->production_cm ?? 0,
-                'running_hours' => $request->running_hours ?? 0,
-                'clinker_factor' => $request->clinker_factor ?? 0,
-                'silo_semen' => $request->silo_semen ?? 0,
+
+                'feed' => $this->normalizeNumber($request->feed),
+                'blaine' => $this->normalizeNumber($request->blaine),
+                'sieving' => $this->normalizeNumber($request->sieving),
+                'production_cm' => $this->normalizeNumber($request->production_cm),
+                'production_ship' => $this->normalizeNumber($request->production_ship),
+                'running_hours' => $this->normalizeNumber($request->running_hours),
+                'clinker_factor' => $this->normalizeNumber($request->clinker_factor),
+                'silo_semen' => $this->normalizeNumber($request->silo_semen),
+
                 'packer1_status' => $request->packer1_status,
                 'packer1_note' => $request->packer1_note,
                 'packer2_status' => $request->packer2_status,
                 'packer2_note' => $request->packer2_note,
-                'truck_packer_area' => $request->truck_packer_area ?? 0,
-                'truck_emplacement_area' => $request->truck_emplacement_area ?? 0,
-                'production_packer' => $request->production_packer ?? 0,
+
+                'truck_packer_area' => (int) $this->normalizeNumber($request->truck_packer_area),
+                'truck_emplacement_area' => (int) $this->normalizeNumber($request->truck_emplacement_area),
+                'production_packer' => $this->normalizeNumber($request->production_packer),
+
                 'created_by' => Auth::id(),
             ]);
 
             $this->saveDetailData($report, $request);
         });
 
-        return redirect()->route('reports.index')->with('success', 'Laporan harian berhasil disimpan.');
+        return redirect()
+            ->route('reports.index')
+            ->with('success', 'Laporan harian berhasil disimpan.');
     }
 
     public function show(DailyReport $report)
@@ -80,7 +89,8 @@ class DailyReportController extends Controller
             'materialStocks',
             'materialReceipts',
             'materialUsages',
-            'bagStocks'
+            'materialIntransits',
+            'bagStocks',
         ]);
 
         return view('reports.show', compact('report'));
@@ -92,7 +102,8 @@ class DailyReportController extends Controller
             'materialStocks',
             'materialReceipts',
             'materialUsages',
-            'bagStocks'
+            'materialIntransits',
+            'bagStocks',
         ]);
 
         return view('reports.edit', compact('report'));
@@ -105,76 +116,124 @@ class DailyReportController extends Controller
         DB::transaction(function () use ($request, $report) {
             $report->update([
                 'report_date' => $request->report_date,
+
                 'cement_mill_status' => $request->cement_mill_status,
                 'cement_mill_note' => $request->cement_mill_note,
-                'feed' => $request->feed ?? 0,
-                'blaine' => $request->blaine ?? 0,
-                'sieving' => $request->sieving ?? 0,
-                'production_cm' => $request->production_cm ?? 0,
-                'running_hours' => $request->running_hours ?? 0,
-                'clinker_factor' => $request->clinker_factor ?? 0,
-                'silo_semen' => $request->silo_semen ?? 0,
+                'feed' => $this->normalizeNumber($request->feed),
+                'blaine' => $this->normalizeNumber($request->blaine),
+                'sieving' => $this->normalizeNumber($request->sieving),
+                'production_cm' => $this->normalizeNumber($request->production_cm),
+                'production_ship' => $this->normalizeNumber($request->production_ship),
+                'running_hours' => $this->normalizeNumber($request->running_hours),
+                'clinker_factor' => $this->normalizeNumber($request->clinker_factor),
+                'silo_semen' => $this->normalizeNumber($request->silo_semen),
+
                 'packer1_status' => $request->packer1_status,
                 'packer1_note' => $request->packer1_note,
                 'packer2_status' => $request->packer2_status,
                 'packer2_note' => $request->packer2_note,
-                'truck_packer_area' => $request->truck_packer_area ?? 0,
-                'truck_emplacement_area' => $request->truck_emplacement_area ?? 0,
-                'production_packer' => $request->production_packer ?? 0,
-            ]);
 
-            $report->materialStocks()->delete();
-            $report->materialReceipts()->delete();
-            $report->materialUsages()->delete();
-            $report->bagStocks()->delete();
+                'truck_packer_area' => (int) $this->normalizeNumber($request->truck_packer_area),
+                'truck_emplacement_area' => (int) $this->normalizeNumber($request->truck_emplacement_area),
+                'production_packer' => $this->normalizeNumber($request->production_packer),
+            ]);
 
             $this->saveDetailData($report, $request);
         });
 
-        return redirect()->route('reports.index')->with('success', 'Laporan harian berhasil diperbarui.');
+        return redirect()
+            ->route('reports.index')
+            ->with('success', 'Laporan harian berhasil diperbarui.');
     }
 
     public function destroy(DailyReport $report)
     {
         $report->delete();
 
-        return redirect()->route('reports.index')->with('success', 'Laporan harian berhasil dihapus.');
+        return redirect()
+            ->route('reports.index')
+            ->with('success', 'Laporan harian berhasil dihapus.');
     }
 
-    private function saveDetailData(DailyReport $report, Request $request)
+    private function saveDetailData(DailyReport $report, Request $request): void
     {
+        $report->materialStocks()->delete();
+        $report->materialReceipts()->delete();
+        $report->materialUsages()->delete();
+        $report->materialIntransits()->delete();
+        $report->bagStocks()->delete();
+
         foreach ($request->stocks ?? [] as $materialName => $quantity) {
+            $normalizedQuantity = $this->normalizeNumber($quantity);
+
+            if ($this->isEmptyDetailValue($quantity, $normalizedQuantity)) {
+                continue;
+            }
+
             MaterialStock::create([
                 'daily_report_id' => $report->id,
                 'material_name' => $materialName,
-                'quantity' => $quantity ?? 0,
+                'quantity' => $normalizedQuantity,
                 'unit' => $materialName === 'Solar' ? 'liter' : 'ton',
             ]);
         }
 
         foreach ($request->receipts ?? [] as $materialName => $quantity) {
+            $normalizedQuantity = $this->normalizeNumber($quantity);
+
+            if ($this->isEmptyDetailValue($quantity, $normalizedQuantity)) {
+                continue;
+            }
+
             MaterialReceipt::create([
                 'daily_report_id' => $report->id,
                 'material_name' => $materialName,
-                'quantity' => $quantity ?? 0,
-                'unit' => $materialName === 'Solar' ? 'liter' : 'ton',
+                'quantity' => $normalizedQuantity,
+                'unit' => 'ton',
             ]);
         }
 
         foreach ($request->usages ?? [] as $materialName => $quantity) {
+            $normalizedQuantity = $this->normalizeNumber($quantity);
+
+            if ($this->isEmptyDetailValue($quantity, $normalizedQuantity)) {
+                continue;
+            }
+
             MaterialUsage::create([
                 'daily_report_id' => $report->id,
                 'material_name' => $materialName,
-                'quantity' => $quantity ?? 0,
-                'unit' => $materialName === 'Solar' || $materialName === 'Gas' ? 'liter' : 'ton',
+                'quantity' => $normalizedQuantity,
+                'unit' => in_array($materialName, ['Solar', 'Gas']) ? 'liter' : 'ton',
+            ]);
+        }
+
+        foreach ($request->intransits ?? [] as $materialName => $quantity) {
+            $normalizedQuantity = $this->normalizeNumber($quantity);
+
+            if ($this->isEmptyDetailValue($quantity, $normalizedQuantity)) {
+                continue;
+            }
+
+            MaterialIntransit::create([
+                'daily_report_id' => $report->id,
+                'material_name' => $materialName,
+                'quantity' => $normalizedQuantity,
+                'unit' => 'ton',
             ]);
         }
 
         foreach ($request->bags ?? [] as $bagType => $quantity) {
+            $normalizedQuantity = $this->normalizeNumber($quantity);
+
+            if ($this->isEmptyDetailValue($quantity, $normalizedQuantity)) {
+                continue;
+            }
+
             BagStock::create([
                 'daily_report_id' => $report->id,
                 'bag_type' => $bagType,
-                'quantity' => $quantity ?? 0,
+                'quantity' => $normalizedQuantity,
                 'unit' => 'lembar',
             ]);
         }
@@ -195,29 +254,33 @@ class DailyReportController extends Controller
             'packer1_note' => 'nullable|string|max:255',
             'packer2_note' => 'nullable|string|max:255',
 
-            'feed' => 'nullable|numeric|min:0',
-            'blaine' => 'nullable|numeric|min:0',
-            'sieving' => 'nullable|numeric|min:0',
-            'production_cm' => 'nullable|numeric|min:0',
-            'running_hours' => 'nullable|numeric|min:0',
-            'clinker_factor' => 'nullable|numeric|min:0',
-            'silo_semen' => 'nullable|numeric|min:0',
+            'feed' => 'nullable|string',
+            'blaine' => 'nullable|string',
+            'sieving' => 'nullable|string',
+            'production_cm' => 'nullable|string',
+            'production_ship' => 'nullable|string',
+            'running_hours' => 'nullable|string',
+            'clinker_factor' => 'nullable|string',
+            'silo_semen' => 'nullable|string',
 
-            'truck_packer_area' => 'nullable|integer|min:0',
-            'truck_emplacement_area' => 'nullable|integer|min:0',
-            'production_packer' => 'nullable|numeric|min:0',
+            'truck_packer_area' => 'nullable|string',
+            'truck_emplacement_area' => 'nullable|string',
+            'production_packer' => 'nullable|string',
 
             'stocks' => 'nullable|array',
-            'stocks.*' => 'nullable|numeric|min:0',
+            'stocks.*' => 'nullable|string',
 
             'receipts' => 'nullable|array',
-            'receipts.*' => 'nullable|numeric|min:0',
+            'receipts.*' => 'nullable|string',
 
             'usages' => 'nullable|array',
-            'usages.*' => 'nullable|numeric|min:0',
+            'usages.*' => 'nullable|string',
+
+            'intransits' => 'nullable|array',
+            'intransits.*' => 'nullable|string',
 
             'bags' => 'nullable|array',
-            'bags.*' => 'nullable|numeric|min:0',
+            'bags.*' => 'nullable|string',
         ], [
             'report_date.required' => 'Tanggal laporan wajib diisi.',
             'report_date.date' => 'Format tanggal laporan tidak valid.',
@@ -231,13 +294,31 @@ class DailyReportController extends Controller
 
             'packer2_status.required' => 'Kondisi Packer 2 wajib dipilih.',
             'packer2_status.in' => 'Kondisi Packer 2 tidak valid.',
-
-            '*.numeric' => 'Input angka harus berupa angka yang valid.',
-            '*.min' => 'Input angka tidak boleh bernilai minus.',
-
-            'truck_packer_area.integer' => 'Jumlah truk area packer harus berupa bilangan bulat.',
-            'truck_emplacement_area.integer' => 'Jumlah truk area emplacement harus berupa bilangan bulat.',
         ]);
+    }
+
+    private function normalizeNumber($value): float
+    {
+        if ($value === null || $value === '') {
+            return 0;
+        }
+
+        $value = trim((string) $value);
+        $value = str_replace(' ', '', $value);
+
+        if (str_contains($value, ',') && str_contains($value, '.')) {
+            $value = str_replace('.', '', $value);
+            $value = str_replace(',', '.', $value);
+        } elseif (str_contains($value, ',')) {
+            $value = str_replace(',', '.', $value);
+        }
+
+        return is_numeric($value) ? (float) $value : 0;
+    }
+
+    private function isEmptyDetailValue($originalValue, float $normalizedValue): bool
+    {
+        return $originalValue === null || $originalValue === '' || $normalizedValue <= 0;
     }
 
     public function exportExcel(DailyReport $report)
@@ -246,6 +327,7 @@ class DailyReportController extends Controller
             'materialStocks',
             'materialReceipts',
             'materialUsages',
+            'materialIntransits',
             'bagStocks',
         ]);
 
