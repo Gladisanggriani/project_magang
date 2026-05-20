@@ -168,6 +168,7 @@
                 </div>
             </div>
 
+            
             {{-- STATUS MESIN --}}
             <div class="panel-card span-4">
                 <div class="panel-header">
