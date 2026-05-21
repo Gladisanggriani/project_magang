@@ -38,8 +38,8 @@
             $receiptCount = $todayReport->materialReceipts->count();
             $receiptTotal = $todayReport->materialReceipts->sum('quantity');
 
-            $intransitCount = $todayReport->materialReceipts->count();
-            $intransitTotal = $todayReport->materialReceipts->sum('quantity');
+            $intransitCount = $todayReport->materialIntransits->count();
+            $intransitTotal = $todayReport->materialIntransits->sum('quantity');
 
             $usageCount = $todayReport->materialUsages->count();
             $usageTotal = $todayReport->materialUsages->sum('quantity');
@@ -79,13 +79,14 @@
             </div>
         </section>
 
-        <section class="stats-grid">
+        <section class="stats-grid stats-grid-desktop-5">
+            {{-- Produksi Semen --}}
             <article class="stat-card">
                 <div class="stat-top">
                     <div>
                         <p class="stat-title">Produksi Semen</p>
                         <h3 class="stat-value">
-                            {{ number_format($todayReport->production_cm, 2, ',', '.') }}
+                            {{ number_format($todayReport->production_cm ?? 0, 2, ',', '.') }}
                             <span>Ton</span>
                         </h3>
                     </div>
@@ -93,17 +94,37 @@
                 </div>
 
                 <div class="stat-meta">
-                    <span>MTD: {{ number_format($mtdProductionCm, 2, ',', '.') }} Ton</span>
-                    <span>Avg: {{ number_format($avgProductionCm, 2, ',', '.') }} Ton</span>
+                    <span>MTD: {{ number_format($mtdProductionCm ?? 0, 2, ',', '.') }} Ton</span>
+                    <span>Avg: {{ number_format($avgProductionCm ?? 0, 2, ',', '.') }} Ton</span>
                 </div>
             </article>
 
+            {{-- Produksi Kapal --}}
+            <article class="stat-card">
+                <div class="stat-top">
+                    <div>
+                        <p class="stat-title">Produksi Kapal</p>
+                        <h3 class="stat-value">
+                            {{ number_format($todayReport->production_ship ?? 0, 2, ',', '.') }}
+                            <span>Ton</span>
+                        </h3>
+                    </div>
+                    <span class="stat-badge badge-orange">Kapal</span>
+                </div>
+
+                <div class="stat-meta">
+                    <span>Input manual</span>
+                    <span>Hari ini</span>
+                </div>
+            </article>
+
+            {{-- Produksi Packer --}}
             <article class="stat-card">
                 <div class="stat-top">
                     <div>
                         <p class="stat-title">Produksi Packer</p>
                         <h3 class="stat-value">
-                            {{ number_format($todayReport->production_packer, 2, ',', '.') }}
+                            {{ number_format($todayReport->production_packer ?? 0, 2, ',', '.') }}
                             <span>Ton</span>
                         </h3>
                     </div>
@@ -111,35 +132,37 @@
                 </div>
 
                 <div class="stat-meta">
-                    <span>MTD: {{ number_format($mtdProductionPacker, 2, ',', '.') }} Ton</span>
-                    <span>Avg: {{ number_format($avgProductionPacker, 2, ',', '.') }} Ton</span>
+                    <span>MTD: {{ number_format($mtdProductionPacker ?? 0, 2, ',', '.') }} Ton</span>
+                    <span>Avg: {{ number_format($avgProductionPacker ?? 0, 2, ',', '.') }} Ton</span>
                 </div>
             </article>
 
+            {{-- Closing Stock --}}
             <article class="stat-card">
                 <div class="stat-top">
                     <div>
                         <p class="stat-title">Closing Stock</p>
                         <h3 class="stat-value">
-                            {{ number_format($stockTotal, 2, ',', '.') }}
-                            <span>Qty</span>
+                            {{ number_format($closingStock ?? 0, 2, ',', '.') }}
+                            <span>Ton</span>
                         </h3>
                     </div>
                     <span class="stat-badge badge-yellow">Stock</span>
                 </div>
 
                 <div class="stat-meta">
-                    <span>Silo: {{ number_format($todayReport->silo_semen, 2, ',', '.') }} Ton</span>
-                    <span>Feed: {{ number_format($todayReport->feed, 2, ',', '.') }}</span>
+                    <span>Silo: {{ number_format($todayReport->silo_semen ?? 0, 2, ',', '.') }} Ton</span>
+                    <span>Packer: {{ number_format($todayReport->production_packer ?? 0, 2, ',', '.') }} Ton</span>
                 </div>
             </article>
 
-            <article class="stat-card">
+            {{-- Antrian Truck --}}
+            <article class="stat-card stat-card-queue">
                 <div class="stat-top">
                     <div>
                         <p class="stat-title">Antrian Truck</p>
                         <h3 class="stat-value">
-                            {{ $totalTruck }}
+                            {{ $totalTruck ?? 0 }}
                             <span>Truck</span>
                         </h3>
                     </div>
@@ -147,8 +170,8 @@
                 </div>
 
                 <div class="stat-meta">
-                    <span>Packer: {{ $todayReport->truck_packer_area }}</span>
-                    <span>Emplacement: {{ $todayReport->truck_emplacement_area }}</span>
+                    <span>Packer: {{ $todayReport->truck_packer_area ?? 0 }}</span>
+                    <span>Emplacement: {{ $todayReport->truck_emplacement_area ?? 0 }}</span>
                 </div>
             </article>
         </section>
@@ -168,7 +191,7 @@
                 </div>
             </div>
 
-            
+
             {{-- STATUS MESIN --}}
             <div class="panel-card span-4">
                 <div class="panel-header">
@@ -386,7 +409,7 @@
 
             <div class="panel-card span-4">
                 <button type="button" class="summary-popup-card" data-modal-title="Intransit Material"
-                    data-modal-subtitle="Berdasarkan penerimaan material 00.00 s/d 24.00"
+                    data-modal-subtitle="Data intransit material yang diinput manual"
                     data-modal-target="#modal-content-intransit">
                     <div class="summary-popup-left">
                         <div class="summary-popup-icon yellow">
@@ -394,7 +417,7 @@
                         </div>
                         <div>
                             <h3 class="summary-popup-title">Intransit Material</h3>
-                            <p class="summary-popup-subtitle">Berdasarkan penerimaan material</p>
+                            <p class="summary-popup-subtitle">Data intransit material</p>
                         </div>
                     </div>
 
@@ -553,18 +576,19 @@
                 @endforelse
             </div>
 
-            <div id="modal-content-intransit">
-                @forelse($todayReport->materialReceipts as $receipt)
+            <div id="modal-content-intransit" class="d-none">
+                @forelse($todayReport->materialIntransits as $intransit)
                     <div class="modal-data-row">
                         <div class="modal-data-left">
                             <span class="modal-data-dot yellow"></span>
                             <div>
-                                <div class="modal-data-label">{{ $receipt->material_name }}</div>
+                                <div class="modal-data-label">{{ $intransit->material_name }}</div>
                                 <div class="modal-data-subtext">Intransit material</div>
                             </div>
                         </div>
+
                         <div class="modal-data-value yellow">
-                            {{ number_format($receipt->quantity, 2, ',', '.') }} {{ $receipt->unit }}
+                            {{ number_format($intransit->quantity, 2, ',', '.') }} {{ $intransit->unit }}
                         </div>
                     </div>
                 @empty

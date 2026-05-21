@@ -190,7 +190,36 @@
         </div>
 
         <div class="report-section">
-            <div class="report-section-title">4. Pemakaian Material 00.00 s/d 24.00</div>
+            <div class="report-section-title">4. Intransit Material</div>
+
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th style="width:60px;">No</th>
+                        <th>Material</th>
+                        <th style="width:180px;">Qty</th>
+                        <th style="width:120px;">Satuan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($report->materialIntransits as $index => $intransit)
+                        <tr>
+                            <td class="text-center">{{ $index + 1 }}</td>
+                            <td>{{ $intransit->material_name }}</td>
+                            <td class="text-right">{{ number_format($intransit->quantity, 2, ',', '.') }}</td>
+                            <td>{{ $intransit->unit }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center">Belum ada data intransit material.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="report-section">
+            <div class="report-section-title">5. Pemakaian Material 00.00 s/d 24.00</div>
 
             <table class="report-table">
                 <thead>
@@ -219,7 +248,7 @@
         </div>
 
         <div class="report-section">
-            <div class="report-section-title">5. Packer Dumai</div>
+            <div class="report-section-title">6. Packer Dumai</div>
 
             <table class="report-table">
                 <thead>
@@ -253,7 +282,7 @@
         </div>
 
         <div class="report-section">
-            <div class="report-section-title">6. Antrian Truk</div>
+            <div class="report-section-title">7. Antrian Truk</div>
 
             <table class="report-table antrian-table">
                 <tbody>
@@ -274,7 +303,7 @@
         </div>
 
         <div class="report-section">
-            <div class="report-section-title">7. Produksi Packer</div>
+            <div class="report-section-title">8. Produksi Packer</div>
 
             <table class="report-table">
                 <tbody>
@@ -287,7 +316,7 @@
         </div>
 
         <div class="report-section">
-            <div class="report-section-title">8. Stock Kantong</div>
+            <div class="report-section-title">9. Stock Kantong</div>
 
             <table class="report-table">
                 <thead>

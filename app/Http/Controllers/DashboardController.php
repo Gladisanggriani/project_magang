@@ -17,6 +17,7 @@ class DashboardController extends Controller
             'materialStocks',
             'materialReceipts',
             'materialUsages',
+            'materialIntransits',
             'bagStocks'
         ])->whereDate('report_date', $today)->first();
 
@@ -25,6 +26,7 @@ class DashboardController extends Controller
                 'materialStocks',
                 'materialReceipts',
                 'materialUsages',
+                'materialIntransits',
                 'bagStocks'
             ])->latest('report_date')->first();
         }
