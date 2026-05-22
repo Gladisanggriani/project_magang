@@ -54,13 +54,13 @@
             <div>
                 <h1 class="hero-title">OPERASIONAL GP DUMAI</h1>
                 <p class="hero-subtitle">
-                    Monitoring data produksi, stock material, status mesin, dan aktivitas packer harian.
+                    {{-- Monitoring data produksi, stock material, status mesin, dan aktivitas packer harian. --}}
 
                     @if (\Carbon\Carbon::parse($todayReport->report_date)->toDateString() !== now()->toDateString())
                         <br>
-                        <small>
+                        <p>
                             Catatan: belum ada laporan untuk hari ini, dashboard menampilkan data laporan terakhir.
-                        </small>
+                        </p>
                     @endif
                 </p>
             </div>
@@ -113,7 +113,6 @@
                 </div>
 
                 <div class="stat-meta">
-                    <span>Input manual</span>
                     <span>Hari ini</span>
                 </div>
             </article>
@@ -151,8 +150,7 @@
                 </div>
 
                 <div class="stat-meta">
-                    <span>Silo: {{ number_format($todayReport->silo_semen ?? 0, 2, ',', '.') }} Ton</span>
-                    <span>Packer: {{ number_format($todayReport->production_packer ?? 0, 2, ',', '.') }} Ton</span>
+                    <span>Hari ini</span>
                 </div>
             </article>
 
@@ -240,7 +238,7 @@
                     <div>
                         <h3 class="panel-title">Monitoring Level Silo Semen</h3>
                         <p class="panel-subtitle">
-                            Visual level silo otomatis, responsif, dan memantau tren naik/turun.
+                            {{-- Visual level silo otomatis, responsif, dan memantau tren naik/turun. --}}
                         </p>
                     </div>
 

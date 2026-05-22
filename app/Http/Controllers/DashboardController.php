@@ -13,22 +13,22 @@ class DashboardController extends Controller
     {
         $today = Carbon::today();
 
-        $todayReport = DailyReport::with([
+        $relations = [
             'materialStocks',
             'materialReceipts',
             'materialUsages',
             'materialIntransits',
-            'bagStocks'
-        ])->whereDate('report_date', $today)->first();
+            'bagStocks',
+        ];
+
+        $todayReport = DailyReport::with($relations)
+            ->whereDate('report_date', $today)
+            ->first();
 
         if (!$todayReport) {
-            $todayReport = DailyReport::with([
-                'materialStocks',
-                'materialReceipts',
-                'materialUsages',
-                'materialIntransits',
-                'bagStocks'
-            ])->latest('report_date')->first();
+            $todayReport = DailyReport::with($relations)
+                ->latest('report_date')
+                ->first();
         }
 
         $previousReport = null;
@@ -58,10 +58,31 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Ketahanan Stock
+        | Closing Stock
         |--------------------------------------------------------------------------
         | Rumus:
-        | Ketahanan Stock = Closing Stock / Rata-rata Pemakaian Harian
+        | Closing Stock = Silo Semen + Produksi Semen - Produksi Packer
+        */
+        $closingStock = 0;
+        $totalTruck = 0;
+
+        if ($todayReport) {
+            $closingStock =
+                ($todayReport->silo_semen ?? 0)
+                + ($todayReport->production_cm ?? 0)
+                - ($todayReport->production_packer ?? 0);
+
+            $totalTruck =
+                ($todayReport->truck_packer_area ?? 0)
+                + ($todayReport->truck_emplacement_area ?? 0);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ketahanan Stock Sementara
+        |--------------------------------------------------------------------------
+        | Ini masih memakai rata-rata pemakaian harian dari material usage.
+        | Nanti kalau RAKP sudah aktif penuh, bagian ini bisa diganti ke rumus RAKP.
         */
         $stockResistance = [];
 
@@ -114,6 +135,8 @@ class DashboardController extends Controller
             'avgProductionCm',
             'avgProductionPacker',
             'chartReports',
+            'closingStock',
+            'totalTruck',
             'stockResistance',
             'silos',
             'siloCapacity',
@@ -172,15 +195,6 @@ class DashboardController extends Controller
 
     private function buildSilos(?DailyReport $todayReport, ?DailyReport $previousReport): array
     {
-        /*
-        |--------------------------------------------------------------------------
-        | Konfigurasi Silo
-        |--------------------------------------------------------------------------
-        | Saat ini database kamu baru punya field silo_semen.
-        | Kalau nanti ada Silo 1, Silo 2, Silo 3, tinggal tambah config di sini.
-        |
-        | Capacity 1000 ini sementara. Nanti ganti sesuai kapasitas asli silo.
-        */
         $configs = [
             [
                 'code' => 'silo_semen',
