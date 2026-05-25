@@ -200,7 +200,7 @@ class DashboardController extends Controller
                 'code' => 'silo_semen',
                 'label' => 'Silo Semen',
                 'field' => 'silo_semen',
-                'capacity' => 900000,
+                'capacity' => 11000,
                 'unit' => 'Ton',
             ],
         ];

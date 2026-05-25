@@ -21,15 +21,17 @@
             <i class="bi bi-arrow-left"></i> Kembali
         </a>
 
-        <a href="{{ route('reports.export-excel', $report->id) }}" class="btn-secondary">
-            <i class="bi bi-file-earmark-excel"></i> Export Excel
-        </a>
-
-        @if (auth()->user()->hasRole(['admin', 'operator']))
-            <a href="{{ route('reports.edit', $report->id) }}" class="btn-primary">
-                <i class="bi bi-pencil-square"></i> Edit Laporan
+        @auth
+            <a href="{{ route('reports.export-excel', $report->id) }}" class="btn-secondary">
+                <i class="bi bi-file-earmark-excel"></i> Export Excel
             </a>
-        @endif
+
+            @if (auth()->user()->hasRole(['admin', 'operator']))
+                <a href="{{ route('reports.edit', $report->id) }}" class="btn-primary">
+                    <i class="bi bi-pencil-square"></i> Edit Laporan
+                </a>
+            @endif
+        @endauth
     </div>
 
     <div class="report-document">
@@ -42,26 +44,29 @@
             </p>
         </div>
 
-        <div class="report-info-box">
-            <div>
+        <div class="report-info-box report-info-box-5">
+            <div class="report-info-item">
                 <span>Operational Cement Mill</span>
                 <strong>{{ $report->cement_mill_status ?: '-' }}</strong>
             </div>
-            <div>
+
+            <div class="report-info-item">
                 <span>Produksi Semen</span>
-                <strong>{{ number_format($report->production_cm, 2, ',', '.') }} Ton</strong>
+                <strong>{{ number_format($report->production_cm ?? 0, 2, ',', '.') }} Ton</strong>
             </div>
 
-            <div>
+            <div class="report-info-item">
                 <span>Produksi dari Kapal</span>
                 <strong>{{ number_format($report->production_ship ?? 0, 2, ',', '.') }} Ton</strong>
             </div>
-            <div>
+
+            <div class="report-info-item">
                 <span>Produksi Packer</span>
-                <strong>{{ number_format($report->production_packer, 2, ',', '.') }} Ton</strong>
+                <strong>{{ number_format($report->production_packer ?? 0, 2, ',', '.') }} Ton</strong>
             </div>
-            <div>
-                <span>Total Antrian Truk</span>
+
+            <div class="report-info-item report-info-queue">
+                <span>Total Antrian</span>
                 <strong>{{ $totalTruck }} Truck</strong>
             </div>
         </div>

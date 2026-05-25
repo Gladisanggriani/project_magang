@@ -22,6 +22,19 @@ class DailyReportController extends Controller
             $query->whereDate('report_date', $request->report_date);
         }
 
+        if ($request->filled('month')) {
+            $query->whereMonth('report_date', (int) $request->month);
+
+            if ($request->filled('year')) {
+                $query->whereYear('report_date', (int) $request->year);
+            }
+        }
+
+        if ($request->filled('weekday')) {
+            // weekday: 1 = Senin, 2 = Selasa, ..., 7 = Minggu
+            $query->whereRaw('WEEKDAY(report_date) + 1 = ?', [(int) $request->weekday]);
+        }
+
         if ($request->filled('status')) {
             $query->where(function ($q) use ($request) {
                 $q->where('cement_mill_status', $request->status)
@@ -335,6 +348,90 @@ class DailyReportController extends Controller
         $filename = 'laporan-harian-' . $date . '.xls';
 
         $html = view('exports.daily-report-excel', compact('report'))->render();
+
+        return response($html)
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"')
+            ->header('Cache-Control', 'max-age=0');
+    }
+    public function exportMonthlyExcel(Request $request)
+    {
+        $query = DailyReport::with([
+            'materialStocks',
+            'materialReceipts',
+            'materialUsages',
+            'materialIntransits',
+            'bagStocks',
+        ]);
+
+        $filterTitle = 'Semua Laporan';
+
+        if ($request->filled('month')) {
+            $query->whereMonth('report_date', (int) $request->month);
+
+            if ($request->filled('year')) {
+                $query->whereYear('report_date', (int) $request->year);
+            }
+
+            $monthNames = [
+                1 => 'Januari',
+                2 => 'Februari',
+                3 => 'Maret',
+                4 => 'April',
+                5 => 'Mei',
+                6 => 'Juni',
+                7 => 'Juli',
+                8 => 'Agustus',
+                9 => 'September',
+                10 => 'Oktober',
+                11 => 'November',
+                12 => 'Desember',
+            ];
+
+            $filterTitle = 'Bulan ' . ($monthNames[(int) $request->month] ?? '-');
+
+            if ($request->filled('year')) {
+                $filterTitle .= ' ' . $request->year;
+            }
+        }
+
+        if ($request->filled('weekday')) {
+            $query->whereRaw('WEEKDAY(report_date) + 1 = ?', [(int) $request->weekday]);
+
+            $dayNames = [
+                1 => 'Senin',
+                2 => 'Selasa',
+                3 => 'Rabu',
+                4 => 'Kamis',
+                5 => 'Jumat',
+                6 => 'Sabtu',
+                7 => 'Minggu',
+            ];
+
+            $filterTitle .= ' - Hari ' . ($dayNames[(int) $request->weekday] ?? '-');
+        }
+
+        if ($request->filled('status')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('cement_mill_status', $request->status)
+                    ->orWhere('packer1_status', $request->status)
+                    ->orWhere('packer2_status', $request->status);
+            });
+
+            $filterTitle .= ' - Status ' . $request->status;
+        }
+
+        if ($request->filled('report_date')) {
+            $query->whereDate('report_date', $request->report_date);
+
+            $filterTitle = 'Tanggal ' . \Carbon\Carbon::parse($request->report_date)->format('d-m-Y');
+        }
+
+        $reports = $query->orderBy('report_date', 'asc')->get();
+
+        $filename = 'rekap-laporan-' . now()->format('Ymd-His') . '.xls';
+
+        $html = view('exports.monthly-report-excel', compact('reports', 'filterTitle'))->render();
 
         return response($html)
             ->header('Content-Type', 'application/vnd.ms-excel')

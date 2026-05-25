@@ -29,8 +29,13 @@
                     <div class="brand-title">Dashboard Operasional GP Dumai</div>
                     <div class="brand-subtitle">
                         PT Semen Padang - Monitoring Produksi dan Operasional Harian
-                        • Role: {{ strtoupper(auth()->user()->role) }}
-                        @if (request()->routeIs('dashboard'))
+                        @auth
+                            • Role: {{ strtoupper(auth()->user()->role) }}
+                        @else
+                            • Mode: VIEWER
+                        @endauth
+
+                        @if (request()->routeIs('dashboard') || request()->routeIs('dashboard.public'))
                             • Auto refresh 30 detik
                         @endif
                     </div>
@@ -39,33 +44,40 @@
 
             <div class="nav-links">
                 <a href="{{ route('dashboard') }}"
-                    class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    class="nav-link {{ request()->routeIs('dashboard') || request()->routeIs('dashboard.public') ? 'active' : '' }}">
                     Dashboard
                 </a>
 
                 <a href="{{ route('reports.index') }}"
-                    class="nav-link {{ request()->routeIs('reports.index') ? 'active' : '' }}">
-                    Riwayat
+                    class="nav-link {{ request()->routeIs('reports.index') || request()->routeIs('reports.show') ? 'active' : '' }}">
+                    Riwayat Laporan
                 </a>
 
-                @if (auth()->user()->hasRole(['admin', 'operator']))
-                    <a href="{{ route('reports.create') }}"
-                        class="nav-link {{ request()->routeIs('reports.create') ? 'active' : '' }}">
-                        Input Laporan
-                    </a>
-                @endif
+                @auth
+                    @if (auth()->user()->hasRole(['admin', 'operator']))
+                        <a href="{{ route('reports.create') }}"
+                            class="nav-link {{ request()->routeIs('reports.create') ? 'active' : '' }}">
+                            Input Laporan
+                        </a>
 
-                {{-- @if (auth()->user()->hasRole('admin'))
-                    <a href="{{ route('users.index') }}"
-                        class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
-                        Manajemen User
-                    </a>
-                @endif --}}
+                        <a href="{{ route('rakps.index') }}"
+                            class="nav-link {{ request()->routeIs('rakps.*') ? 'active' : '' }}">
+                            RKAP
+                        </a>
+                    @endif
 
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="btn-logout">Logout</button>
-                </form>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="btn-logout">
+                            Logout
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="btn-primary">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        Login Admin/Operator
+                    </a>
+                @endauth
             </div>
         </header>
 

@@ -71,11 +71,19 @@
                     Data laporan: {{ \Carbon\Carbon::parse($todayReport->report_date)->format('d F Y') }}
                 </div>
 
-                @if (auth()->user()->hasRole(['admin', 'operator']))
-                    <a href="{{ route('reports.create') }}" class="btn-action">
-                        <i class="bi bi-plus-circle"></i> Input Laporan
+                @auth
+                    @if (auth()->user()->hasRole(['admin', 'operator']))
+                        <a href="{{ route('reports.create') }}" class="btn-action">
+                            <i class="bi bi-plus-circle"></i>
+                            Input Laporan
+                        </a>
+                    @endif
+                @else
+                    <a href="{{ route('login') }}" class="btn-action">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        Login Admin/Operator
                     </a>
-                @endif
+                @endauth
             </div>
         </section>
 
@@ -103,7 +111,7 @@
             <article class="stat-card">
                 <div class="stat-top">
                     <div>
-                        <p class="stat-title">Produksi Kapal</p>
+                        <p class="stat-title">Semen Dari Kapal</p>
                         <h3 class="stat-value">
                             {{ number_format($todayReport->production_ship ?? 0, 2, ',', '.') }}
                             <span>Ton</span>
@@ -481,6 +489,8 @@
                     </div>
                 </button>
             </div>
+
+
 
             <div class="panel-card span-4">
                 <button type="button" class="summary-popup-card" data-modal-title="Parameter Cement Mill"
