@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @stack('scripts')
 </head>
@@ -25,10 +26,13 @@
                 <div class="brand-logo-img">
                     <img src="{{ asset('images/logo_sp.png') }}" alt="Logo PT Semen Padang">
                 </div>
+
                 <div>
                     <div class="brand-title">Dashboard Operasional GP Dumai</div>
+
                     <div class="brand-subtitle">
                         PT Semen Padang - Monitoring Produksi dan Operasional Harian
+
                         @auth
                             • Role: {{ strtoupper(auth()->user()->role) }}
                         @else
@@ -49,7 +53,7 @@
                 </a>
 
                 <a href="{{ route('reports.index') }}"
-                    class="nav-link {{ request()->routeIs('reports.index') || request()->routeIs('reports.show') ? 'active' : '' }}">
+                    class="nav-link {{ request()->routeIs('reports.index') || request()->routeIs('reports.show') || request()->routeIs('reports.preview-monthly') ? 'active' : '' }}">
                     Riwayat Laporan
                 </a>
 
@@ -59,13 +63,15 @@
                             class="nav-link {{ request()->routeIs('reports.create') ? 'active' : '' }}">
                             Input Laporan
                         </a>
-
-                        <a href="{{ route('rakps.index') }}"
-                            class="nav-link {{ request()->routeIs('rakps.*') ? 'active' : '' }}">
-                            RKAP
-                        </a>
                     @endif
+                @endauth
 
+                <a href="{{ route('rakps.index') }}"
+                    class="nav-link {{ request()->routeIs('rakps.*') ? 'active' : '' }}">
+                    RKAP
+                </a>
+
+                @auth
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="btn-logout">
@@ -87,11 +93,13 @@
                     {{ session('success') }}
                 </div>
             @endif
+
             @if (session('error'))
                 <div class="alert-danger">
                     {{ session('error') }}
                 </div>
             @endif
+
             @yield('content')
         </main>
     </div>

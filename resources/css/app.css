@@ -2980,3 +2980,21 @@ body.modal-open {
         grid-column: span 1;
     }
 }
+
+.rkap-input-box input:disabled,
+.rkap-year input:disabled {
+    background: #f8fafc;
+    color: #64748b;
+    cursor: not-allowed;
+}
+
+.rkap-input-box:has(input:disabled) {
+    background: #f8fafc;
+    opacity: 0.95;
+}
+
+button:disabled,
+.btn-secondary:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}

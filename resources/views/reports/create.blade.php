@@ -64,20 +64,20 @@
 
                 <div class="form-group">
                     <label>Feed</label>
-                    <input type="number" step="0.01" min="0" name="feed" value="{{ old('feed') }}"
-                        placeholder="0.00">
+                    <input type="text" inputmode="decimal" name="feed" value="{{ old('feed') }}"
+                        placeholder="Contoh: 2.520,78">
                 </div>
 
                 <div class="form-group">
                     <label>Blaine</label>
-                    <input type="number" step="0.01" min="0" name="blaine" value="{{ old('blaine') }}"
-                        placeholder="0.00">
+                    <input type="text" inputmode="decimal" name="blaine" value="{{ old('blaine') }}"
+                        placeholder="Contoh: 2.520,78">
                 </div>
 
                 <div class="form-group">
                     <label>Sieving</label>
-                    <input type="number" step="0.01" min="0" name="sieving" value="{{ old('sieving') }}"
-                        placeholder="0.00">
+                    <input type="text" inputmode="decimal" name="sieving" value="{{ old('sieving') }}"
+                        placeholder="Contoh: 2.520,78">
                 </div>
 
                 <div class="form-group">
@@ -88,14 +88,14 @@
 
                 <div class="form-group">
                     <label>Running Hours</label>
-                    <input type="number" step="0.01" min="0" name="running_hours"
-                        value="{{ old('running_hours') }}" placeholder="0.00">
+                    <input type="text" inputmode="decimal" name="running_hours" value="{{ old('running_hours') }}"
+                        placeholder="Contoh: 12,50">
                 </div>
 
                 <div class="form-group">
                     <label>Clinker Factor</label>
-                    <input type="number" step="0.01" min="0" name="clinker_factor"
-                        value="{{ old('clinker_factor') }}" placeholder="0.00">
+                    <input type="text" inputmode="decimal" name="clinker_factor" value="{{ old('clinker_factor') }}"
+                        placeholder="Contoh: 70,50">
                 </div>
 
                 <div class="form-group">
@@ -106,39 +106,22 @@
                         <small class="text-danger">{{ $message }}</small>
                     @enderror
                 </div>
+
                 <div class="form-group">
                     <label>Silo Semen</label>
-                    <input type="number" step="0.01" min="0" name="silo_semen" value="{{ old('silo_semen') }}"
-                        placeholder="0.00">
+                    <input type="text" inputmode="decimal" name="silo_semen" value="{{ old('silo_semen') }}"
+                        placeholder="Contoh: 2.520,78">
                 </div>
+
                 <div class="form-group" style="grid-column: 1 / -1;">
                     <label>Keterangan Cement Mill</label>
                     <textarea name="cement_mill_note" rows="4" placeholder="Contoh: Operasional lancar"
                         style="width: 100%; min-height: 120px; resize: vertical; line-height: 1.6;">{{ old('cement_mill_note') }}</textarea>
                 </div>
-
             </div>
         </div>
 
-        {{-- STOCK MATERIAL --}}
-        {{-- <div class="form-section">
-            <div class="form-section-title">
-                <div class="form-section-icon">
-                    <i class="bi bi-box-seam"></i>
-                </div>
-                <span>2. Stock Material</span>
-            </div>
-
-            <div class="form-grid">
-                @foreach (['Semen', 'Klinker', 'Gypsum', 'Gypsum Natural', 'Gypsum Purified', 'Pozzolan', 'Flyash Wet', 'Flyash Dry', 'Limestone', 'Solar'] as $material)
-                    <div class="form-group">
-                        <label>{{ $material }}</label>
-                        <input type="number" step="0.01" min="0" name="stocks[{{ $material }}]"
-                            value="{{ old('stocks.' . $material) }}" placeholder="0.00">
-                    </div>
-                @endforeach
-            </div>
-        </div> --}}
+        {{-- STOCK MATERIAL OTOMATIS --}}
         <div class="input-note">
             Stock material dihitung otomatis dari stock akhir sebelumnya + penerimaan material - pemakaian material.
         </div>
@@ -156,8 +139,8 @@
                 @foreach (['Semen', 'Klinker', 'Limestone', 'Gypsum', 'Pozzolan', 'Fly Ash Dry SDS', 'Fly Ash Dry ESM', 'Fly Ash Dry IK', 'Fly Ash Dry SDO', 'Fly Ash Wet Tenayan', 'Fly Ash Wet RAPP'] as $material)
                     <div class="form-group">
                         <label>{{ $material }}</label>
-                        <input type="number" step="0.01" min="0" name="receipts[{{ $material }}]"
-                            value="{{ old('receipts.' . $material) }}" placeholder="0.00">
+                        <input type="text" inputmode="decimal" name="receipts[{{ $material }}]"
+                            value="{{ old('receipts.' . $material) }}" placeholder="0,00">
                     </div>
                 @endforeach
             </div>
@@ -196,8 +179,8 @@
                 @foreach (['Klinker', 'Gypsum Natural', 'Gypsum Purified', 'Pozzolan', 'Wet Fly Ash', 'Dry Fly Ash', 'Limestone', 'Solar', 'Gas'] as $material)
                     <div class="form-group">
                         <label>{{ $material }}</label>
-                        <input type="number" step="0.01" min="0" name="usages[{{ $material }}]"
-                            value="{{ old('usages.' . $material) }}" placeholder="0.00">
+                        <input type="text" inputmode="decimal" name="usages[{{ $material }}]"
+                            value="{{ old('usages.' . $material) }}" placeholder="0,00">
                     </div>
                 @endforeach
             </div>
@@ -271,13 +254,13 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label>Area Packer</label>
-                    <input type="number" min="0" name="truck_packer_area"
+                    <input type="number" min="0" step="1" name="truck_packer_area"
                         value="{{ old('truck_packer_area') }}" placeholder="0">
                 </div>
 
                 <div class="form-group">
                     <label>Area Emplacement</label>
-                    <input type="number" min="0" name="truck_emplacement_area"
+                    <input type="number" min="0" step="1" name="truck_emplacement_area"
                         value="{{ old('truck_emplacement_area') }}" placeholder="0">
                 </div>
             </div>
@@ -295,8 +278,8 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label>Total Produksi Packer</label>
-                    <input type="number" step="0.01" min="0" name="production_packer"
-                        value="{{ old('production_packer') }}" placeholder="0.00">
+                    <input type="text" inputmode="decimal" name="production_packer"
+                        value="{{ old('production_packer') }}" placeholder="Contoh: 2.520,78">
                 </div>
             </div>
         </div>

@@ -3,16 +3,30 @@
 @section('title', 'RKAP')
 
 @section('content')
+    @php
+        $canManageRakp =
+            auth()->check() &&
+            auth()
+                ->user()
+                ->hasRole(['admin', 'operator']);
+    @endphp
+
     <div class="page-card rakp-hero">
         <div>
-            <h2 class="page-card-title">Input RKAP</h2>
+            <h2 class="page-card-title">
+                {{ $canManageRakp ? 'Input RKAP' : 'Data RKAP' }}
+            </h2>
             <p class="page-card-subtitle">
-                Input data RKAP tahunan untuk Cement Mill dan Packer.
+                @if ($canManageRakp)
+                    Input data RKAP tahunan untuk Cement Mill dan Packer.
+                @else
+                    Mode viewer: data RKAP hanya dapat dilihat.
+                @endif
             </p>
         </div>
     </div>
 
-    @if ($errors->any())
+    @if ($errors->any() && $canManageRakp)
         <div class="alert-danger">
             <strong>Terjadi kesalahan:</strong>
             <ul style="margin: 10px 0 0 18px;">
@@ -27,25 +41,36 @@
         @csrf
 
         <div class="rkap-page">
-            <div class="rkap-header">
-                <div>
-                    <span class="rkap-label">Data Manual Tahunan</span>
-                    <h3>RKAP Cement Mill dan Packer</h3>
-                    <p>
-                        Isi nilai RKAP per bulan. Data ini berdiri sendiri dan tidak diambil dari laporan harian.
-                    </p>
+            @if ($canManageRakp)
+                <div class="rkap-header">
+                    <div>
+                        <span class="rkap-label">Data Manual Tahunan</span>
+                        <h3>RKAP Cement Mill dan Packer</h3>
+                        <p>
+                            Data RKAP berisi target Cement Mill dan Packer per bulan selama satu tahun.
+                            Data ini berdiri sendiri dan tidak diambil dari laporan harian.
+                        </p>
+                    </div>
+
+                    <div class="rkap-year">
+                        <label>Tahun</label>
+                        <input
+                            type="number"
+                            name="year"
+                            value="{{ old('year', $year) }}"
+                            min="2000"
+                            max="2100"
+                            required
+                        >
+                    </div>
                 </div>
 
-                <div class="rkap-year">
-                    <label>Tahun</label>
-                    <input type="number" name="year" value="{{ old('year', $year) }}" min="2000" max="2100"
-                        required>
+                <div class="rkap-note">
+                    Gunakan format angka Indonesia, contoh: 56.000,00.
                 </div>
-            </div>
-
-            <div class="rkap-note">
-                Gunakan format angka Indonesia, contoh: 56.000,00.
-            </div>
+            @else
+                <input type="hidden" name="year" value="{{ $year }}">
+            @endif
 
             <div class="rkap-total-grid">
                 <div class="rkap-total-card">
@@ -64,79 +89,89 @@
                 </div>
             </div>
 
-            <div class="rkap-group-card">
-                <div class="rkap-group-head">
-                    <div>
-                        <h4>RKAP Cement Mill</h4>
-                        <p>Target RKAP Cement Mill dari Januari sampai Desember.</p>
-                    </div>
-
-                    <div class="rkap-group-total">
-                        {{ number_format($totalCementMill ?? 0, 2, ',', '.') }} Ton
-                    </div>
-                </div>
-
-                <div class="rkap-month-grid">
-                    @foreach ($monthNames as $monthNumber => $monthName)
-                        @php
-                            $cementMillValue = optional($cementMillRakps->get($monthNumber))->value;
-                        @endphp
-
-                        <div class="rkap-month-card">
-                            <div class="rkap-month-top">
-                                <label>{{ $monthName }}</label>
-                            </div>
-
-                            <div class="rkap-input-box">
-                                <input type="text" inputmode="decimal" name="cement_mill[{{ $monthNumber }}]"
-                                    value="{{ old('cement_mill.' . $monthNumber, $cementMillValue ? number_format($cementMillValue, 2, ',', '.') : '') }}"
-                                    placeholder="0,00">
-                                <small>Ton</small>
-                            </div>
+            @if ($canManageRakp)
+                <div class="rkap-group-card">
+                    <div class="rkap-group-head">
+                        <div>
+                            <h4>RKAP Cement Mill</h4>
+                            <p>Target RKAP Cement Mill dari Januari sampai Desember.</p>
                         </div>
-                    @endforeach
-                </div>
-            </div>
 
-            <div class="rkap-group-card">
-                <div class="rkap-group-head">
-                    <div>
-                        <h4>RKAP Packer</h4>
-                        <p>Target RKAP Packer dari Januari sampai Desember.</p>
-                    </div>
-
-                    <div class="rkap-group-total">
-                        {{ number_format($totalPacker ?? 0, 2, ',', '.') }} Ton
-                    </div>
-                </div>
-
-                <div class="rkap-month-grid">
-                    @foreach ($monthNames as $monthNumber => $monthName)
-                        @php
-                            $packerValue = optional($packerRakps->get($monthNumber))->value;
-                        @endphp
-
-                        <div class="rkap-month-card">
-                            <div class="rkap-month-top">
-                                <label>{{ $monthName }}</label>
-                            </div>
-
-                            <div class="rkap-input-box">
-                                <input type="text" inputmode="decimal" name="packer[{{ $monthNumber }}]"
-                                    value="{{ old('packer.' . $monthNumber, $packerValue ? number_format($packerValue, 2, ',', '.') : '') }}"
-                                    placeholder="0,00">
-                                <small>Ton</small>
-                            </div>
+                        <div class="rkap-group-total">
+                            {{ number_format($totalCementMill ?? 0, 2, ',', '.') }} Ton
                         </div>
-                    @endforeach
+                    </div>
+
+                    <div class="rkap-month-grid">
+                        @foreach ($monthNames as $monthNumber => $monthName)
+                            @php
+                                $cementMillValue = optional($cementMillRakps->get($monthNumber))->value;
+                            @endphp
+
+                            <div class="rkap-month-card">
+                                <div class="rkap-month-top">
+                                    <label>{{ $monthName }}</label>
+                                </div>
+
+                                <div class="rkap-input-box">
+                                    <input
+                                        type="text"
+                                        inputmode="decimal"
+                                        name="cement_mill[{{ $monthNumber }}]"
+                                        value="{{ old('cement_mill.' . $monthNumber, $cementMillValue ? number_format($cementMillValue, 2, ',', '.') : '') }}"
+                                        placeholder="0,00"
+                                    >
+                                    <small>Ton</small>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
-            </div>
+
+                <div class="rkap-group-card">
+                    <div class="rkap-group-head">
+                        <div>
+                            <h4>RKAP Packer</h4>
+                            <p>Target RKAP Packer dari Januari sampai Desember.</p>
+                        </div>
+
+                        <div class="rkap-group-total">
+                            {{ number_format($totalPacker ?? 0, 2, ',', '.') }} Ton
+                        </div>
+                    </div>
+
+                    <div class="rkap-month-grid">
+                        @foreach ($monthNames as $monthNumber => $monthName)
+                            @php
+                                $packerValue = optional($packerRakps->get($monthNumber))->value;
+                            @endphp
+
+                            <div class="rkap-month-card">
+                                <div class="rkap-month-top">
+                                    <label>{{ $monthName }}</label>
+                                </div>
+
+                                <div class="rkap-input-box">
+                                    <input
+                                        type="text"
+                                        inputmode="decimal"
+                                        name="packer[{{ $monthNumber }}]"
+                                        value="{{ old('packer.' . $monthNumber, $packerValue ? number_format($packerValue, 2, ',', '.') : '') }}"
+                                        placeholder="0,00"
+                                    >
+                                    <small>Ton</small>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
 
             <div class="rkap-result-section">
                 <div class="rkap-result-header" style="text-align: center;">
                     <div>
                         <h4>Rekap Hasil RKAP Tahun {{ $year }}</h4>
-                        <p>Ringkasan hasil input RKAP Cement Mill dan Packer selama satu tahun.</p>
+                        <p>Ringkasan hasil RKAP Cement Mill dan Packer selama satu tahun.</p>
                     </div>
                 </div>
 
@@ -177,8 +212,7 @@
                                     <tbody>
                                         @foreach ($monthNames as $monthNumber => $monthName)
                                             @php
-                                                $cementMillValue =
-                                                    optional($cementMillRakps->get($monthNumber))->value ?? 0;
+                                                $cementMillValue = optional($cementMillRakps->get($monthNumber))->value ?? 0;
                                             @endphp
 
                                             <tr>
@@ -312,8 +346,7 @@
                                     <tbody>
                                         @foreach ($monthNames as $monthNumber => $monthName)
                                             @php
-                                                $cementMillValue =
-                                                    optional($cementMillRakps->get($monthNumber))->value ?? 0;
+                                                $cementMillValue = optional($cementMillRakps->get($monthNumber))->value ?? 0;
                                                 $packerValue = optional($packerRakps->get($monthNumber))->value ?? 0;
                                                 $monthlyTotal = $cementMillValue + $packerValue;
                                             @endphp
@@ -374,9 +407,15 @@
 
         <div class="form-section rkap-action-card">
             <div class="form-actions">
-                <button type="submit" class="btn-primary">
-                    <i class="bi bi-save"></i> Simpan RKAP
-                </button>
+                @if ($canManageRakp)
+                    <button type="submit" class="btn-primary">
+                        <i class="bi bi-save"></i> Simpan RKAP
+                    </button>
+                @else
+                    <button type="button" class="btn-secondary" disabled>
+                        <i class="bi bi-eye"></i> Mode Viewer
+                    </button>
+                @endif
 
                 <a href="{{ route('rakps.export', ['year' => $year]) }}" class="btn-secondary">
                     <i class="bi bi-file-earmark-excel"></i> Export RKAP
