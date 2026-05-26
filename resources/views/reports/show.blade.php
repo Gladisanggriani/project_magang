@@ -70,6 +70,30 @@
                 <strong>{{ $totalTruck }} Truck</strong>
             </div>
         </div>
+        <div class="report-section">
+            <div class="report-section-title">Informasi RKAP dan Ketahanan Stock</div>
+
+            <table class="report-table">
+                <tbody>
+                    <tr>
+                        <th style="width: 35%;">Closing Stock</th>
+                        <td>{{ number_format($closingStock ?? 0, 2, ',', '.') }} Ton</td>
+                    </tr>
+                    <tr>
+                        <th>RKAP Bulan Laporan</th>
+                        <td>{{ number_format($currentRakp ?? 0, 2, ',', '.') }} Ton</td>
+                    </tr>
+                    <tr>
+                        <th>Jumlah Hari dalam Bulan</th>
+                        <td>{{ $daysInMonth ?? 0 }} Hari</td>
+                    </tr>
+                    <tr>
+                        <th>Ketahanan Stock</th>
+                        <td>{{ number_format($stockResistanceDays ?? 0, 2, ',', '.') }} Hari</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
         <div class="report-section">
             <div class="report-section-title">1. Cement Mill Dumai</div>

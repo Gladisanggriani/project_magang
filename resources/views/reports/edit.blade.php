@@ -144,7 +144,7 @@
         </div>
 
         {{-- STOCK MATERIAL --}}
-        <div class="form-section">
+        {{-- <div class="form-section">
             <div class="form-section-title">
                 <div class="form-section-icon">
                     <i class="bi bi-box-seam"></i>
@@ -161,6 +161,9 @@
                     </div>
                 @endforeach
             </div>
+        </div> --}}
+        <div class="input-note">
+            Stock material dihitung otomatis dari stock akhir sebelumnya + penerimaan material - pemakaian material.
         </div>
 
         {{-- PENERIMAAN MATERIAL --}}

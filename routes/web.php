@@ -12,6 +12,8 @@ Route::get('/dashboard/silo-data', [DashboardController::class, 'siloData'])->na
 
 Route::get('/reports', [DailyReportController::class, 'index'])->name('reports.index');
 
+Route::get('/reports/preview/monthly', [DailyReportController::class, 'previewMonthlyReport'])
+    ->name('reports.preview-monthly');
 // export bulanan/filter
 Route::get('/reports/export/monthly', [DailyReportController::class, 'exportMonthlyExcel'])
     ->name('reports.export-monthly');
@@ -31,6 +33,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/rakp', [RakpController::class, 'index'])->name('rakps.index');
         Route::post('/rakp', [RakpController::class, 'store'])->name('rakps.store');
+        Route::get('/rakp/export', [RakpController::class, 'export'])->name('rakps.export');
     });
 
     Route::middleware(['role:admin'])->group(function () {

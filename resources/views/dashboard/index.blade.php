@@ -8,19 +8,22 @@
             <h3>Belum ada data laporan</h3>
             <p>Silakan input laporan harian terlebih dahulu agar dashboard dapat menampilkan data operasional.</p>
 
-            @if (auth()->user()->hasRole(['admin', 'operator']))
-                <a href="{{ route('reports.create') }}" class="btn-action">
-                    <i class="bi bi-plus-circle"></i> Input Laporan Pertama
-                </a>
+            @auth
+                @if (auth()->user()->hasRole(['admin', 'operator']))
+                    <a href="{{ route('reports.create') }}" class="btn-action">
+                        <i class="bi bi-plus-circle"></i> Input Laporan Pertama
+                    </a>
+                @endif
             @else
-                <p>Silakan hubungi admin/operator untuk melakukan input laporan.</p>
-            @endif
+                <p>Silakan login sebagai admin/operator untuk melakukan input laporan.</p>
+
+                <a href="{{ route('login') }}" class="btn-action">
+                    <i class="bi bi-box-arrow-in-right"></i> Login Admin/Operator
+                </a>
+            @endauth
         </div>
     @else
         @php
-            $getStock = fn($name) => optional($todayReport->materialStocks->firstWhere('material_name', $name))
-                ->quantity ?? 0;
-
             $statusClass = function ($status) {
                 return match (strtoupper($status ?? '')) {
                     'RUN', 'READY' => 'status-badge status-success',
@@ -53,14 +56,10 @@
         <section class="hero-banner">
             <div>
                 <h1 class="hero-title">OPERASIONAL GP DUMAI</h1>
-                <p class="hero-subtitle">
-                    {{-- Monitoring data produksi, stock material, status mesin, dan aktivitas packer harian. --}}
 
+                <p class="hero-subtitle">
                     @if (\Carbon\Carbon::parse($todayReport->report_date)->toDateString() !== now()->toDateString())
-                        <br>
-                        <p>
-                            Catatan: belum ada laporan untuk hari ini, dashboard menampilkan data laporan terakhir.
-                        </p>
+                        Catatan: belum ada laporan untuk hari ini, dashboard menampilkan data laporan terakhir.
                     @endif
                 </p>
             </div>
@@ -88,7 +87,6 @@
         </section>
 
         <section class="stats-grid stats-grid-desktop-5">
-            {{-- Produksi Semen --}}
             <article class="stat-card">
                 <div class="stat-top">
                     <div>
@@ -98,6 +96,7 @@
                             <span>Ton</span>
                         </h3>
                     </div>
+
                     <span class="stat-badge badge-red">Hari Ini</span>
                 </div>
 
@@ -107,7 +106,6 @@
                 </div>
             </article>
 
-            {{-- Produksi Kapal --}}
             <article class="stat-card">
                 <div class="stat-top">
                     <div>
@@ -117,6 +115,7 @@
                             <span>Ton</span>
                         </h3>
                     </div>
+
                     <span class="stat-badge badge-orange">Kapal</span>
                 </div>
 
@@ -125,7 +124,6 @@
                 </div>
             </article>
 
-            {{-- Produksi Packer --}}
             <article class="stat-card">
                 <div class="stat-top">
                     <div>
@@ -135,6 +133,7 @@
                             <span>Ton</span>
                         </h3>
                     </div>
+
                     <span class="stat-badge badge-blue">Packer</span>
                 </div>
 
@@ -144,7 +143,6 @@
                 </div>
             </article>
 
-            {{-- Closing Stock --}}
             <article class="stat-card">
                 <div class="stat-top">
                     <div>
@@ -154,6 +152,7 @@
                             <span>Ton</span>
                         </h3>
                     </div>
+
                     <span class="stat-badge badge-yellow">Stock</span>
                 </div>
 
@@ -162,7 +161,6 @@
                 </div>
             </article>
 
-            {{-- Antrian Truck --}}
             <article class="stat-card stat-card-queue">
                 <div class="stat-top">
                     <div>
@@ -172,6 +170,7 @@
                             <span>Truck</span>
                         </h3>
                     </div>
+
                     <span class="stat-badge badge-purple">Queue</span>
                 </div>
 
@@ -182,8 +181,8 @@
             </article>
         </section>
 
+
         <section class="dashboard-content">
-            {{-- GRAFIK PRODUKSI --}}
             <div class="panel-card span-8">
                 <div class="panel-header">
                     <div>
@@ -197,8 +196,6 @@
                 </div>
             </div>
 
-
-            {{-- STATUS MESIN --}}
             <div class="panel-card span-4">
                 <div class="panel-header">
                     <div>
@@ -213,6 +210,7 @@
                             <h4>Cement Mill</h4>
                             <p>{{ $todayReport->cement_mill_note ?: 'Tidak ada keterangan' }}</p>
                         </div>
+
                         <span class="{{ $statusClass($todayReport->cement_mill_status) }}">
                             {{ $todayReport->cement_mill_status ?: '-' }}
                         </span>
@@ -223,6 +221,7 @@
                             <h4>Packer 1</h4>
                             <p>{{ $todayReport->packer1_note ?: 'Tidak ada keterangan' }}</p>
                         </div>
+
                         <span class="{{ $statusClass($todayReport->packer1_status) }}">
                             {{ $todayReport->packer1_status ?: '-' }}
                         </span>
@@ -233,6 +232,7 @@
                             <h4>Packer 2</h4>
                             <p>{{ $todayReport->packer2_note ?: 'Tidak ada keterangan' }}</p>
                         </div>
+
                         <span class="{{ $statusClass($todayReport->packer2_status) }}">
                             {{ $todayReport->packer2_status ?: '-' }}
                         </span>
@@ -240,14 +240,11 @@
                 </div>
             </div>
 
-            {{-- SILO PREMIUM --}}
             <div class="panel-card span-12">
                 <div class="panel-header">
                     <div>
                         <h3 class="panel-title">Monitoring Level Silo Semen</h3>
-                        <p class="panel-subtitle">
-                            {{-- Visual level silo otomatis, responsif, dan memantau tren naik/turun. --}}
-                        </p>
+                        <p class="panel-subtitle"></p>
                     </div>
 
                     <div class="silo-last-update">
@@ -362,7 +359,6 @@
                 </div>
             </div>
 
-            {{-- SUMMARY POPUP CARDS --}}
             <div class="panel-card span-4">
                 <button type="button" class="summary-popup-card" data-modal-title="Closing Stock Material"
                     data-modal-subtitle="Data stock material terakhir" data-modal-target="#modal-content-closing-stock">
@@ -465,7 +461,7 @@
             </div>
 
             <div class="panel-card span-4">
-                <button type="button" class="summary-popup-card" data-modal-title="Ketahanan Stock"
+                <button type="button" class="summary-popup-card" data-modal-title="Ketahanan Stock Material"
                     data-modal-subtitle="Estimasi ketahanan berdasarkan rata-rata pemakaian"
                     data-modal-target="#modal-content-resistance">
                     <div class="summary-popup-left">
@@ -473,7 +469,7 @@
                             <i class="bi bi-hourglass-split"></i>
                         </div>
                         <div>
-                            <h3 class="summary-popup-title">Ketahanan Stock</h3>
+                            <h3 class="summary-popup-title">Ketahanan Stock Material</h3>
                             <p class="summary-popup-subtitle">Estimasi hari stock bertahan</p>
                         </div>
                     </div>
@@ -490,8 +486,6 @@
                 </button>
             </div>
 
-
-
             <div class="panel-card span-4">
                 <button type="button" class="summary-popup-card" data-modal-title="Parameter Cement Mill"
                     data-modal-subtitle="Ringkasan parameter operasional"
@@ -501,7 +495,7 @@
                             <i class="bi bi-speedometer2"></i>
                         </div>
                         <div>
-                            <h3 class="summary-popup-title">Parameter Cement Mill</h3>
+                            <h3 class="summary-popup-title">Cement Mill</h3>
                             <p class="summary-popup-subtitle">Ringkasan parameter operasional</p>
                         </div>
                     </div>
@@ -544,7 +538,6 @@
             </div>
         </section>
 
-        {{-- MODAL CONTENT TEMPLATES --}}
         <div style="display:none;">
             <div id="modal-content-closing-stock">
                 @forelse($todayReport->materialStocks as $stock)
@@ -584,7 +577,7 @@
                 @endforelse
             </div>
 
-            <div id="modal-content-intransit" class="d-none">
+            <div id="modal-content-intransit">
                 @forelse($todayReport->materialIntransits as $intransit)
                     <div class="modal-data-row">
                         <div class="modal-data-left">
@@ -632,7 +625,8 @@
                                 <div class="modal-data-label">{{ $item['material_name'] }}</div>
                                 <div class="modal-data-subtext">
                                     Stock: {{ number_format($item['stock'], 2, ',', '.') }} {{ $item['unit'] }}
-                                    • Avg: {{ number_format($item['average_usage'], 2, ',', '.') }}/hari
+                                    • Pemakaian hari ini: {{ number_format($item['today_usage'], 2, ',', '.') }}
+                                    {{ $item['unit'] }}
                                 </div>
                             </div>
                         </div>
@@ -645,7 +639,7 @@
                         </div>
                     </div>
                 @empty
-                    <div class="modal-empty">Belum ada data ketahanan stock.</div>
+                    <div class="modal-empty">Belum ada data ketahanan stock material.</div>
                 @endforelse
             </div>
 
@@ -677,7 +671,9 @@
                             <div class="modal-data-subtext">Parameter umpan</div>
                         </div>
                     </div>
-                    <div class="modal-data-value blue">{{ number_format($todayReport->feed ?? 0, 2, ',', '.') }}</div>
+                    <div class="modal-data-value blue">
+                        {{ number_format($todayReport->feed ?? 0, 2, ',', '.') }}
+                    </div>
                 </div>
 
                 <div class="modal-data-row">
@@ -688,7 +684,9 @@
                             <div class="modal-data-subtext">Kehalusan semen</div>
                         </div>
                     </div>
-                    <div class="modal-data-value blue">{{ number_format($todayReport->blaine ?? 0, 2, ',', '.') }}</div>
+                    <div class="modal-data-value blue">
+                        {{ number_format($todayReport->blaine ?? 0, 2, ',', '.') }}
+                    </div>
                 </div>
 
                 <div class="modal-data-row">
@@ -699,7 +697,9 @@
                             <div class="modal-data-subtext">Nilai saringan</div>
                         </div>
                     </div>
-                    <div class="modal-data-value blue">{{ number_format($todayReport->sieving ?? 0, 2, ',', '.') }}</div>
+                    <div class="modal-data-value blue">
+                        {{ number_format($todayReport->sieving ?? 0, 2, ',', '.') }}
+                    </div>
                 </div>
 
                 <div class="modal-data-row">
@@ -711,7 +711,8 @@
                         </div>
                     </div>
                     <div class="modal-data-value yellow">
-                        {{ number_format($todayReport->running_hours ?? 0, 2, ',', '.') }} Jam</div>
+                        {{ number_format($todayReport->running_hours ?? 0, 2, ',', '.') }} Jam
+                    </div>
                 </div>
 
                 <div class="modal-data-row">
@@ -723,7 +724,8 @@
                         </div>
                     </div>
                     <div class="modal-data-value purple">
-                        {{ number_format($todayReport->clinker_factor ?? 0, 2, ',', '.') }}</div>
+                        {{ number_format($todayReport->clinker_factor ?? 0, 2, ',', '.') }}
+                    </div>
                 </div>
 
                 <div class="modal-data-row">
@@ -734,13 +736,13 @@
                             <div class="modal-data-subtext">Persediaan di silo</div>
                         </div>
                     </div>
-                    <div class="modal-data-value green">{{ number_format($todayReport->silo_semen ?? 0, 2, ',', '.') }}
-                        Ton</div>
+                    <div class="modal-data-value green">
+                        {{ number_format($todayReport->silo_semen ?? 0, 2, ',', '.') }} Ton
+                    </div>
                 </div>
             </div>
         </div>
 
-        {{-- MODAL GLOBAL --}}
         <div class="dashboard-modal" id="dashboardModal">
             <div class="dashboard-modal-overlay" id="dashboardModalOverlay"></div>
 
@@ -765,17 +767,12 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            /*
-            |--------------------------------------------------------------------------
-            | Chart Produksi
-            |--------------------------------------------------------------------------
-            */
             const chartCanvas = document.getElementById('productionChart');
 
             if (chartCanvas) {
-                const chartLabels = @json($chartReports->pluck('report_date')->map(fn($date) => \Carbon\Carbon::parse($date)->format('d M')));
-                const productionCm = @json($chartReports->pluck('production_cm'));
-                const productionPacker = @json($chartReports->pluck('production_packer'));
+                const chartLabels = @json(($chartReports ?? collect())->pluck('report_date')->map(fn($date) => \Carbon\Carbon::parse($date)->format('d M')));
+                const productionCm = @json(($chartReports ?? collect())->pluck('production_cm'));
+                const productionPacker = @json(($chartReports ?? collect())->pluck('production_packer'));
 
                 new Chart(chartCanvas, {
                     data: {
@@ -827,36 +824,8 @@
                 });
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | Auto Refresh Silo
-            |--------------------------------------------------------------------------
-            */
             const siloUrl = "{{ route('dashboard.silo-data') }}";
             const lastUpdateEl = document.getElementById('silo-last-update-time');
-
-            function trendText(trend) {
-                if (trend === 'up') return 'Trend: Naik';
-                if (trend === 'down') return 'Trend: Turun';
-                return 'Trend: Stabil';
-            }
-
-            function levelText(level) {
-                return 'Level: ' + level;
-            }
-
-            function levelNoteText(level) {
-                if (level === 'Rendah') return 'Isi silo berada pada 0%–30% dari kapasitas.';
-                if (level === 'Sedang') return 'Isi silo berada pada 31%–70% dari kapasitas.';
-                if (level === 'Tinggi') return 'Isi silo berada pada 71%–100% dari kapasitas.';
-                return '-';
-            }
-
-            function trendNoteText(trend) {
-                if (trend === 'up') return 'Isi silo hari ini lebih besar dibanding laporan sebelumnya.';
-                if (trend === 'down') return 'Isi silo hari ini lebih kecil dibanding laporan sebelumnya.';
-                return 'Isi silo sama dengan laporan sebelumnya atau belum ada data pembanding.';
-            }
 
             function updateTrendClass(el, trend) {
                 el.classList.remove('trend-up', 'trend-down', 'trend-stable');
@@ -866,6 +835,16 @@
             function updateLevelClass(el, levelClass) {
                 el.classList.remove('level-low', 'level-medium', 'level-high');
                 el.classList.add(levelClass);
+            }
+
+            function trendText(trend) {
+                if (trend === 'up') return 'Trend: Naik';
+                if (trend === 'down') return 'Trend: Turun';
+                return 'Trend: Stabil';
+            }
+
+            function levelText(level) {
+                return 'Level: ' + level;
             }
 
             async function refreshSiloData() {
@@ -896,8 +875,6 @@
                         const fill = card.querySelector('[data-field="fill"]');
                         const levelTextEl = card.querySelector('[data-field="level_text"]');
                         const trendTextEl = card.querySelector('[data-field="trend_text"]');
-                        const levelNoteEl = card.querySelector('[data-field="level_note"]');
-                        const trendNoteEl = card.querySelector('[data-field="trend_note"]');
                         const valueEl = card.querySelector('[data-field="value"]');
                         const capacityEl = card.querySelector('[data-field="capacity"]');
                         const percentageEl = card.querySelector('[data-field="percentage"]');
@@ -919,14 +896,11 @@
                             updateTrendClass(trendTextEl, silo.trend);
                         }
 
-                        if (levelNoteEl) levelNoteEl.textContent = levelNoteText(silo.level_text);
-                        if (trendNoteEl) trendNoteEl.textContent = trendNoteText(silo.trend);
-
                         if (valueEl) valueEl.textContent = silo.formatted_value;
                         if (capacityEl) capacityEl.textContent = silo.formatted_capacity;
                         if (percentageEl) percentageEl.textContent = silo.formatted_percentage;
                         if (percentageBadgeEl) percentageBadgeEl.textContent = silo
-                            .formatted_percentage;
+                        .formatted_percentage;
 
                         if (deltaEl) {
                             if (silo.trend === 'up') {
@@ -946,11 +920,6 @@
             refreshSiloData();
             setInterval(refreshSiloData, 10000);
 
-            /*
-            |--------------------------------------------------------------------------
-            | Modal Detail Dashboard
-            |--------------------------------------------------------------------------
-            */
             const modal = document.getElementById('dashboardModal');
             const modalOverlay = document.getElementById('dashboardModalOverlay');
             const modalClose = document.getElementById('dashboardModalClose');

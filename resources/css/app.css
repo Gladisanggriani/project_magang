@@ -2364,200 +2364,530 @@ body.modal-open {
         align-items: flex-start;
     }
 }
+
 /* =========================
-   RAKP PAGE
+   RKAP PAGE
 ========================= */
 .rakp-hero {
     margin-bottom: 18px;
 }
 
-.rakp-main-card {
-    padding: 0;
+.rkap-page {
+    background: #ffffff;
+    border: 1px solid #dbe4ee;
+    border-radius: 24px;
     overflow: hidden;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
 }
 
-.rakp-section-header {
-    padding: 22px 24px;
+.rkap-header {
+    padding: 26px 30px;
+    background: linear-gradient(135deg, #ffffff 0%, #fff5f5 100%);
     border-bottom: 1px solid #e2e8f0;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    gap: 18px;
-    background: linear-gradient(135deg, #ffffff 0%, #fff7f7 100%);
+    gap: 24px;
 }
 
-.rakp-section-left {
-    display: flex;
+.rkap-label {
+    display: inline-flex;
     align-items: center;
-    gap: 14px;
-}
-
-.rakp-section-left h3 {
-    margin: 0;
-    font-size: 20px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: #fee2e2;
+    color: #b91c1c;
+    font-size: 12px;
     font-weight: 900;
+    margin-bottom: 12px;
+}
+
+.rkap-header h3 {
+    margin: 0;
     color: #0f172a;
+    font-size: 24px;
+    font-weight: 900;
 }
 
-.rakp-section-left p {
-    margin: 5px 0 0;
-    font-size: 13px;
+.rkap-header p {
+    margin: 8px 0 0;
     color: #64748b;
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 640px;
 }
 
-.rakp-year-control {
-    min-width: 180px;
+.rkap-year {
+    width: 190px;
+    flex: 0 0 190px;
 }
 
-.rakp-year-control label {
+.rkap-year label {
     display: block;
     margin-bottom: 8px;
-    font-size: 13px;
-    font-weight: 800;
     color: #334155;
+    font-size: 13px;
+    font-weight: 900;
 }
 
-.rakp-year-control input {
+.rkap-year input {
     width: 100%;
-    height: 46px;
-    border: 1px solid #dbe4ee;
+    height: 48px;
+    border: 1px solid #cbd5e1;
     border-radius: 14px;
     padding: 0 14px;
-    font-size: 14px;
     outline: none;
+    color: #0f172a;
+    font-size: 14px;
+    background: #ffffff;
 }
 
-.rakp-year-control input:focus {
+.rkap-year input:focus {
     border-color: #ef4444;
     box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.10);
 }
 
-.rakp-note {
-    margin: 18px 22px 0;
+.rkap-note {
+    margin: 22px 26px 0;
+    padding: 12px 14px;
+    border: 1px solid #fdba74;
+    border-radius: 14px;
+    background: #fff7ed;
+    color: #9a3412;
+    font-size: 13px;
 }
 
-.rakp-month-grid {
+.rkap-total-grid {
+    padding: 22px 26px 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.rkap-total-card {
+    border: 1px solid #dbe4ee;
+    border-radius: 18px;
+    background: #ffffff;
+    padding: 18px;
+    text-align: center;
+}
+
+.rkap-total-card span {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.rkap-total-card strong {
+    display: block;
+    color: #0f172a;
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.rkap-total-card.highlight {
+    background: linear-gradient(135deg, #fff7f7 0%, #ffffff 100%);
+    border-color: #fecaca;
+}
+
+.rkap-group-card {
+    margin: 26px;
+    border: 1px solid #dbe4ee;
+    border-radius: 22px;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.rkap-group-card + .rkap-group-card {
+    margin-top: 0;
+}
+
+.rkap-group-head {
+    padding: 22px 24px;
+    border-bottom: 1px solid #dbe4ee;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.rkap-group-head h4 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.rkap-group-head p {
+    margin: 6px 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.rkap-group-total {
+    white-space: nowrap;
+    padding: 11px 16px;
+    border-radius: 999px;
+    background: #fee2e2;
+    color: #b91c1c;
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.rkap-month-grid {
     padding: 22px;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 16px;
 }
 
-.rakp-month-card {
-    border: 1px solid #e2e8f0;
+.rkap-month-card {
+    border: 1px solid #dbe4ee;
     border-radius: 18px;
     background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
     padding: 16px;
-    transition: all 0.2s ease;
+    transition: 0.2s ease;
+    text-align: left;
 }
 
-.rakp-month-card:hover {
-    transform: translateY(-1px);
+.rkap-month-card:hover {
     border-color: #fecaca;
-    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.07);
+    transform: translateY(-1px);
 }
 
-.rakp-month-top {
+.rkap-month-top {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
+    justify-content: flex-start;
+    margin-bottom: 14px;
+    text-align: left;
 }
 
-.rakp-month-number {
-    width: 34px;
-    height: 34px;
-    border-radius: 12px;
-    background: #fff1f2;
-    color: #dc2626;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 900;
-}
-
-.rakp-month-top label {
-    font-size: 14px;
-    font-weight: 900;
+.rkap-month-top label {
     color: #0f172a;
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1.2;
+    text-align: left;
 }
 
-.rakp-input-wrap {
-    display: flex;
-    align-items: center;
-    border: 1px solid #dbe4ee;
+.rkap-input-box {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 58px;
+    border: 1px solid #cbd5e1;
     border-radius: 14px;
     overflow: hidden;
     background: #ffffff;
-    transition: all 0.2s ease;
 }
 
-.rakp-input-wrap:focus-within {
+.rkap-input-box:focus-within {
     border-color: #ef4444;
     box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.10);
 }
 
-.rakp-input-wrap input {
+.rkap-input-box input {
     width: 100%;
+    height: 44px;
     border: none;
     outline: none;
-    padding: 13px 14px;
-    font-size: 14px;
+    padding: 0 14px;
     color: #0f172a;
+    font-size: 14px;
     background: transparent;
+    text-align: center;
 }
 
-.rakp-input-wrap span {
-    align-self: stretch;
-    min-width: 54px;
-    padding: 0 12px;
+.rkap-input-box small {
+    border-left: 1px solid #dbe4ee;
     background: #f8fafc;
-    border-left: 1px solid #e2e8f0;
     color: #64748b;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.rakp-action-card {
+/* Rekap hasil RKAP */
+.rkap-result-section {
+    margin: 26px 0 0;
+    border-top: 1px solid #e2e8f0;
+    background: #ffffff;
+}
+
+.rkap-result-header {
+    padding: 22px 26px;
+    border-bottom: 1px solid #dbe4ee;
+    background: linear-gradient(135deg, #ffffff 0%, #fff7f7 100%);
+}
+
+.rkap-result-header h4 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.rkap-result-header p {
+    margin: 6px 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.rkap-result-list {
+    padding: 24px 26px;
+    display: grid;
+    gap: 14px;
+}
+
+.rkap-result-details {
+    border: 1px solid #dbe4ee;
+    border-radius: 18px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.rkap-result-details[open] {
+    border-color: #fecaca;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+}
+
+.rkap-result-item {
+    list-style: none;
+    width: 100%;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    cursor: pointer;
+}
+
+.rkap-result-item::-webkit-details-marker {
+    display: none;
+}
+
+.rkap-result-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+}
+
+.rkap-result-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 16px;
+    background: #fee2e2;
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex: 0 0 44px;
+}
+
+.rkap-result-left h5 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.rkap-result-left p {
+    margin: 6px 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.rkap-result-right {
+    display: grid;
+    grid-template-columns: 90px 170px 44px;
+    align-items: center;
+    gap: 12px;
+    text-align: right;
+}
+
+.rkap-result-right span {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.rkap-result-right strong {
+    color: #0f172a;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.rkap-eye {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid #fecaca;
+    background: #fff1f2;
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rkap-detail-box {
+    padding: 0 18px 18px;
+    border-top: 1px solid #e2e8f0;
+    background: #fbfdff;
+}
+
+.rkap-detail-title {
+    padding: 16px 0 12px;
+    color: #0f172a;
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.rkap-result-table-wrap {
+    overflow-x: auto;
+}
+
+.rkap-result-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+}
+
+.rkap-result-table th,
+.rkap-result-table td {
+    border: 1px solid #dbe4ee;
+    padding: 13px 14px;
+    vertical-align: middle;
+    font-size: 14px;
+    text-align: center;
+}
+
+.rkap-result-table thead th {
+    background: #fff1f2;
+    color: #991b1b;
+    font-weight: 900;
+    text-align: center;
+}
+
+.rkap-result-table tbody tr:nth-child(even) {
+    background: #fbfdff;
+}
+
+.rkap-result-table tfoot th {
+    background: #f1f5f9;
+    color: #0f172a;
+    font-weight: 900;
+    text-align: center;
+}
+
+.rkap-month-name {
+    text-align: center;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.rkap-result-value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+}
+
+.rkap-result-value span {
+    text-align: center;
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.rkap-result-value small {
+    margin-left: 0;
+    min-width: auto;
+    text-align: center;
+    color: #64748b;
+    font-weight: 800;
+    font-size: 13px;
+}
+
+.rkap-action-card {
     margin-top: 18px;
 }
 
 @media (max-width: 1200px) {
-    .rakp-month-grid {
+    .rkap-month-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 900px) {
-    .rakp-section-header {
+    .rkap-header {
+        flex-direction: column;
+    }
+
+    .rkap-year {
+        width: 100%;
+        flex: initial;
+    }
+
+    .rkap-total-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .rkap-group-head {
         flex-direction: column;
         align-items: flex-start;
     }
 
-    .rakp-year-control {
-        width: 100%;
+    .rkap-month-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .rakp-month-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .rkap-result-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .rkap-result-right {
+        width: 100%;
+        grid-template-columns: 1fr 1fr 44px;
+        text-align: left;
+    }
+
+    .rkap-result-table {
+        min-width: 720px;
     }
 }
 
 @media (max-width: 640px) {
-    .rakp-month-grid {
-        grid-template-columns: 1fr;
-        padding: 16px;
+    .rkap-header {
+        padding: 20px;
     }
 
-    .rakp-section-header {
+    .rkap-note {
+        margin: 16px 18px 0;
+    }
+
+    .rkap-total-grid {
+        padding: 18px 18px 0;
+    }
+
+    .rkap-group-card {
+        margin: 18px;
+    }
+
+    .rkap-month-grid {
+        padding: 16px;
+        grid-template-columns: 1fr;
+    }
+
+    .rkap-result-list {
         padding: 18px;
     }
 }
-
 /* =========================
    FILTER LAPORAN BULANAN
 ========================= */
@@ -2631,5 +2961,22 @@ body.modal-open {
     .filter-month-year select:first-child {
         border-right: 0;
         border-bottom: 1px solid #e2e8f0;
+    }
+}
+
+//cementmill-keterangan cementmill
+.form-group-wide {
+    grid-column: 1 / -1;
+}
+
+.form-group textarea {
+    min-height: 110px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .form-group-wide {
+        grid-column: span 1;
     }
 }

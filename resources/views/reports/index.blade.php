@@ -144,7 +144,7 @@
                     <i class="bi bi-arrow-clockwise"></i> Reset Filter
                 </a>
 
-                <a href="{{ route('reports.export-monthly', request()->query()) }}" class="btn-secondary">
+                <a href="{{ route('reports.preview-monthly', request()->query()) }}" class="btn-secondary">
                     <i class="bi bi-file-earmark-excel"></i> Export Excel
                 </a>
             </div>

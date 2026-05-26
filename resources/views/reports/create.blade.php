@@ -63,12 +63,6 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Status Cement Mill</label>
-                    <input type="text" name="cement_mill_note" value="{{ old('cement_mill_note') }}"
-                        placeholder="Contoh: Operasional lancar">
-                </div>
-
-                <div class="form-group">
                     <label>Feed</label>
                     <input type="number" step="0.01" min="0" name="feed" value="{{ old('feed') }}"
                         placeholder="0.00">
@@ -93,21 +87,6 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Produksi dari Kapal</label>
-                    <input type="text" inputmode="decimal" name="production_ship" value="{{ old('production_ship') }}"
-                        placeholder="Contoh: 1.250,50">
-                </div>
-
-                <div class="form-group">
-                    <label>Produksi dari Kapal</label>
-                    <input type="text" inputmode="decimal" name="production_ship" value="{{ old('production_ship') }}"
-                        placeholder="Contoh: 2.520,78">
-                    @error('production_ship')
-                        <small class="text-danger">{{ $message }}</small>
-                    @enderror
-                </div>
-
-                <div class="form-group">
                     <label>Running Hours</label>
                     <input type="number" step="0.01" min="0" name="running_hours"
                         value="{{ old('running_hours') }}" placeholder="0.00">
@@ -120,15 +99,29 @@
                 </div>
 
                 <div class="form-group">
+                    <label>Produksi dari Kapal</label>
+                    <input type="text" inputmode="decimal" name="production_ship" value="{{ old('production_ship') }}"
+                        placeholder="Contoh: 2.520,78">
+                    @error('production_ship')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
+                <div class="form-group">
                     <label>Silo Semen</label>
                     <input type="number" step="0.01" min="0" name="silo_semen" value="{{ old('silo_semen') }}"
                         placeholder="0.00">
                 </div>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label>Keterangan Cement Mill</label>
+                    <textarea name="cement_mill_note" rows="4" placeholder="Contoh: Operasional lancar"
+                        style="width: 100%; min-height: 120px; resize: vertical; line-height: 1.6;">{{ old('cement_mill_note') }}</textarea>
+                </div>
+
             </div>
         </div>
 
         {{-- STOCK MATERIAL --}}
-        <div class="form-section">
+        {{-- <div class="form-section">
             <div class="form-section-title">
                 <div class="form-section-icon">
                     <i class="bi bi-box-seam"></i>
@@ -145,6 +138,9 @@
                     </div>
                 @endforeach
             </div>
+        </div> --}}
+        <div class="input-note">
+            Stock material dihitung otomatis dari stock akhir sebelumnya + penerimaan material - pemakaian material.
         </div>
 
         {{-- PENERIMAAN MATERIAL --}}
@@ -153,7 +149,7 @@
                 <div class="form-section-icon">
                     <i class="bi bi-arrow-down-circle"></i>
                 </div>
-                <span>3. Penerimaan Material 00.00 s/d 24.00</span>
+                <span>2. Penerimaan Material 00.00 s/d 24.00</span>
             </div>
 
             <div class="form-grid">
@@ -173,11 +169,7 @@
                 <div class="form-section-icon">
                     <i class="bi bi-truck"></i>
                 </div>
-                <span>Intransit Material</span>
-            </div>
-
-            <div class="input-note">
-                Kosongkan material yang tidak memiliki data terbaru. Gunakan format angka Indonesia, contoh: 2.520,78.
+                <span>3. Intransit Material</span>
             </div>
 
             <div class="form-grid">
@@ -315,11 +307,11 @@
                 <div class="form-section-icon">
                     <i class="bi bi-archive"></i>
                 </div>
-                <span>Stock Kantong</span>
+                <span>8. Stock Kantong</span>
             </div>
 
             <div class="form-grid">
-                @foreach (['BB 50 KG SP', 'BB 40 KG SP', 'Dinamik 50 KG', 'Dinamik 40 KG', 'Merdeka 50 KG', 'Merdeka 50 KG'] as $bag)
+                @foreach (['BB 50 KG SP', 'BB 40 KG SP', 'Dinamik 50 KG', 'Dinamik 40 KG', 'Merdeka 50 KG', 'Merdeka 40 KG'] as $bag)
                     <div class="form-group">
                         <label>{{ $bag }}</label>
                         <input type="number" step="1" min="0" name="bags[{{ $bag }}]"

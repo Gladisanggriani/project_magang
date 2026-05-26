@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\DailyReport;
-use App\Models\MaterialUsage;
+use App\Models\Rakp;
+use App\Services\StockCalculationService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 
@@ -39,21 +40,30 @@ class DashboardController extends Controller
                 ->first();
         }
 
-        $startOfMonth = Carbon::now()->startOfMonth();
+        $reportDate = $todayReport
+            ? Carbon::parse($todayReport->report_date)
+            : Carbon::today();
 
-        $mtdProductionCm = DailyReport::whereBetween('report_date', [$startOfMonth, $today])
+        $startOfMonth = $reportDate->copy()->startOfMonth();
+        $endOfMonth = $reportDate->copy()->endOfMonth();
+
+        $mtdProductionCm = DailyReport::whereBetween('report_date', [$startOfMonth, $endOfMonth])
             ->sum('production_cm');
 
-        $mtdProductionPacker = DailyReport::whereBetween('report_date', [$startOfMonth, $today])
+        $mtdProductionPacker = DailyReport::whereBetween('report_date', [$startOfMonth, $endOfMonth])
             ->sum('production_packer');
 
-        $dayOfMonth = Carbon::now()->day;
+        $mtdProductionShip = DailyReport::whereBetween('report_date', [$startOfMonth, $endOfMonth])
+            ->sum('production_ship');
+
+        $dayOfMonth = $reportDate->day;
 
         $avgProductionCm = $dayOfMonth > 0 ? $mtdProductionCm / $dayOfMonth : 0;
         $avgProductionPacker = $dayOfMonth > 0 ? $mtdProductionPacker / $dayOfMonth : 0;
+        $avgProductionShip = $dayOfMonth > 0 ? $mtdProductionShip / $dayOfMonth : 0;
 
         $chartReports = DailyReport::orderBy('report_date', 'asc')
-            ->whereBetween('report_date', [$startOfMonth, $today])
+            ->whereBetween('report_date', [$startOfMonth, $endOfMonth])
             ->get();
 
         /*
@@ -67,10 +77,11 @@ class DashboardController extends Controller
         $totalTruck = 0;
 
         if ($todayReport) {
-            $closingStock =
-                ($todayReport->silo_semen ?? 0)
-                + ($todayReport->production_cm ?? 0)
-                - ($todayReport->production_packer ?? 0);
+            $closingStock = StockCalculationService::closingStock(
+                $todayReport->silo_semen,
+                $todayReport->production_cm,
+                $todayReport->production_packer
+            );
 
             $totalTruck =
                 ($todayReport->truck_packer_area ?? 0)
@@ -79,29 +90,47 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Ketahanan Stock Sementara
+        | RKAP dan Ketahanan Stock
         |--------------------------------------------------------------------------
-        | Ini masih memakai rata-rata pemakaian harian dari material usage.
-        | Nanti kalau RAKP sudah aktif penuh, bagian ini bisa diganti ke rumus RAKP.
+        | Rumus sementara ada di app/Services/StockCalculationService.php
+        */
+        $currentYear = $reportDate->year;
+        $currentMonth = $reportDate->month;
+        $daysInMonth = $reportDate->daysInMonth;
+
+        $currentRakp = Rakp::where('year', $currentYear)
+            ->where('month', $currentMonth)
+            ->where('material_name', 'Semen')
+            ->value('value');
+
+        $stockResistanceDays = StockCalculationService::stockResistance(
+            $closingStock,
+            $currentRakp,
+            $daysInMonth
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ketahanan Stock Material Lama
+        |--------------------------------------------------------------------------
+        | Tetap dikirim agar popup/list dashboard lama tidak error.
         */
         $stockResistance = [];
 
         if ($todayReport) {
             foreach ($todayReport->materialStocks as $stock) {
-                $totalUsage = MaterialUsage::where('material_name', $stock->material_name)
-                    ->whereHas('dailyReport', function ($query) use ($startOfMonth, $today) {
-                        $query->whereBetween('report_date', [$startOfMonth, $today]);
-                    })
+                $todayUsage = $todayReport->materialUsages
+                    ->where('material_name', $stock->material_name)
                     ->sum('quantity');
 
-                $averageUsage = $dayOfMonth > 0 ? $totalUsage / $dayOfMonth : 0;
-
-                $resistanceDays = $averageUsage > 0 ? $stock->quantity / $averageUsage : 0;
+                $resistanceDays = $todayUsage > 0
+                    ? $stock->quantity / $todayUsage
+                    : 0;
 
                 $stockResistance[] = [
                     'material_name' => $stock->material_name,
                     'stock' => $stock->quantity,
-                    'average_usage' => $averageUsage,
+                    'today_usage' => $todayUsage,
                     'resistance_days' => $resistanceDays,
                     'unit' => $stock->unit,
                 ];
@@ -132,11 +161,18 @@ class DashboardController extends Controller
             'todayReport',
             'mtdProductionCm',
             'mtdProductionPacker',
+            'mtdProductionShip',
             'avgProductionCm',
             'avgProductionPacker',
+            'avgProductionShip',
             'chartReports',
             'closingStock',
             'totalTruck',
+            'currentRakp',
+            'currentYear',
+            'currentMonth',
+            'daysInMonth',
+            'stockResistanceDays',
             'stockResistance',
             'silos',
             'siloCapacity',
