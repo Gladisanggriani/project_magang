@@ -64,7 +64,7 @@ a {
     justify-content: space-between;
     align-items: center;
     gap: 18px;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
 }
 
 .brand-block {
@@ -111,22 +111,28 @@ a {
     font-size: 18px;
     font-weight: 800;
     line-height: 1.2;
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
 }
 
 .brand-subtitle {
     font-size: 13px;
     color: var(--muted);
     margin-top: 2px;
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    line-height: 1.45;
 }
 
 .nav-links {
     display: flex;
     align-items: center;
     gap: 10px;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     margin-left: auto;
+    min-width: 0;
 }
 
 .nav-link {
@@ -2964,7 +2970,7 @@ body.modal-open {
     }
 }
 
-//cementmill-keterangan cementmill
+/*cementmill-keterangan cementmill*/
 .form-group-wide {
     grid-column: 1 / -1;
 }
@@ -2997,4 +3003,213 @@ button:disabled,
 .btn-secondary:disabled {
     opacity: 0.65;
     cursor: not-allowed;
+}
+
+
+/* =========================================================
+   FINAL NAVBAR RESPONSIVE FIX
+   Tempel paling bawah app.css
+========================================================= */
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.app-shell {
+    width: 100%;
+    max-width: 100%;
+}
+
+.app-navbar {
+    width: 100%;
+    max-width: 1480px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.brand-block {
+    min-width: 0;
+    flex: 1 1 360px;
+}
+
+.brand-logo-img {
+    flex: 0 0 54px;
+}
+
+.brand-title {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    line-height: 1.25;
+}
+
+.brand-subtitle {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    line-height: 1.45;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+    min-width: 0;
+    margin-left: auto;
+}
+
+.nav-link,
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-logout {
+    white-space: nowrap;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+    .app-shell {
+        padding: 14px;
+    }
+
+    .app-navbar {
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        padding: 16px;
+        border-radius: 20px;
+        gap: 14px;
+    }
+
+    .brand-block {
+        width: 100%;
+        flex: none;
+        display: grid;
+        grid-template-columns: 48px minmax(0, 1fr);
+        gap: 12px;
+        align-items: center;
+    }
+
+    .brand-logo-img {
+        width: 48px;
+        height: 48px;
+        flex: initial;
+    }
+
+    .brand-title {
+        font-size: 16px;
+        line-height: 1.25;
+    }
+
+    .brand-subtitle {
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .nav-links {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        gap: 8px;
+        margin-left: 0;
+    }
+
+    .nav-link,
+    .btn-primary,
+    .btn-secondary,
+    .btn-danger,
+    .btn-logout {
+        height: 42px;
+        padding: 0 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+    .app-shell {
+        padding: 10px;
+    }
+
+    .app-navbar {
+        padding: 14px;
+        border-radius: 18px;
+    }
+
+    .brand-block {
+        grid-template-columns: 46px minmax(0, 1fr);
+        gap: 12px;
+        align-items: center;
+    }
+
+    .brand-logo-img {
+        width: 46px;
+        height: 46px;
+    }
+
+    .brand-title {
+        font-size: 15px;
+    }
+
+    .brand-subtitle {
+        font-size: 11px;
+    }
+
+    .nav-links {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .nav-link,
+    .btn-primary,
+    .btn-secondary,
+    .btn-danger,
+    .btn-logout,
+    .nav-links form {
+        width: 100%;
+    }
+
+    .nav-link,
+    .btn-primary,
+    .btn-secondary,
+    .btn-danger,
+    .btn-logout {
+        min-height: 42px;
+        padding: 10px 12px;
+        text-align: center;
+        justify-content: center;
+        font-size: 13px;
+    }
+
+    .btn-logout {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* HP kecil */
+@media (max-width: 430px) {
+    .nav-links {
+        grid-template-columns: 1fr;
+    }
+
+    .brand-title {
+        font-size: 14px;
+    }
+
+    .brand-subtitle {
+        font-size: 11px;
+    }
 }
