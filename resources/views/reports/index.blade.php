@@ -66,12 +66,12 @@
 
         <form action="{{ route('reports.index') }}" method="GET">
             <div class="filter-report-grid">
-                <div class="form-group">
+                <div class="form-group mt-3">
                     <label>Tanggal Laporan</label>
                     <input type="date" name="report_date" value="{{ request('report_date') }}">
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mt-3">
                     <label>Bulan Laporan</label>
 
                     <div class="filter-month-year">
@@ -108,7 +108,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mt-3">
                     <label>Hari</label>
                     <select name="weekday">
                         <option value="">Semua Hari</option>
@@ -122,7 +122,7 @@
                     </select>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mt-3">
                     <label>Status Mesin / Packer</label>
                     <select name="status">
                         <option value="">Semua Status</option>
@@ -135,7 +135,7 @@
                 </div>
             </div>
 
-            <div class="form-actions filter-actions">
+            <div class="form-actions filter-actions mt-4">
                 <button type="submit" class="btn-primary">
                     <i class="bi bi-search"></i> Cari Laporan
                 </button>
