@@ -2,9 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* =========================================================
-   GLOBAL VARIABLES & BASE
-========================================================= */
+/* GLOBAL VARIABLES & BASE */
 :root {
     --primary: #d71920;
     --primary-dark: #b51218;
@@ -40,9 +38,7 @@ a {
     text-decoration: none;
 }
 
-/* =========================================================
-   LAYOUT
-========================================================= */
+/* LAYOUT */
 .app-shell {
     padding: 24px;
 }
@@ -160,9 +156,7 @@ a {
     cursor: pointer;
 }
 
-/* =========================================================
-   BUTTONS & ALERTS
-========================================================= */
+/* BUTTONS & ALERTS */
 .btn-action,
 .btn-primary,
 .btn-secondary,
@@ -226,9 +220,7 @@ a {
     border: 1px solid #fecaca;
 }
 
-/* =========================================================
-   PAGE CARD & HERO
-========================================================= */
+/* PAGE CARD & HERO */
 .page-card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -304,10 +296,8 @@ a {
     color: var(--muted);
 }
 
-/* =========================================================
-   DASHBOARD STAT CARDS
-   Desktop: 5 cards in 1 row
-========================================================= */
+/* DASHBOARD STAT CARDS
+   Desktop: 5 cards in 1 row */
 .stats-grid {
     display: grid;
     gap: 18px;
@@ -418,9 +408,7 @@ a {
     line-height: 1.4;
 }
 
-/* =========================================================
-   DASHBOARD GRID & PANELS
-========================================================= */
+/* DASHBOARD GRID & PANELS*/
 .dashboard-content,
 .data-grid {
     display: grid;
@@ -479,9 +467,7 @@ a {
     max-height: 320px;
 }
 
-/* =========================================================
-   STATUS, MACHINE, TABLES
-========================================================= */
+/* STATUS, MACHINE, TABLES */
 .machine-list {
     display: grid;
     gap: 12px;
@@ -604,9 +590,7 @@ a {
     justify-content: center;
 }
 
-/* =========================================================
-   METRICS
-========================================================= */
+/* METRICS */
 .metric-stack {
     display: grid;
     gap: 8px;
@@ -634,9 +618,7 @@ a {
     font-weight: 800;
 }
 
-/* =========================================================
-   FORMS
-========================================================= */
+/* FORMS */
 .form-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -720,9 +702,7 @@ a {
     margin-bottom: 14px;
 }
 
-/* =========================================================
-   TABLE ACTION BUTTONS
-========================================================= */
+/* TABLE ACTION BUTTONS */
 .table-actions {
     display: flex;
     align-items: center;
@@ -784,9 +764,7 @@ a {
     filter: brightness(0.98);
 }
 
-/* =========================================================
-   PRETTY LISTS / MATERIAL LISTS
-========================================================= */
+/* PRETTY LISTS / MATERIAL LISTS */
 .pretty-list,
 .material-list {
     display: flex;
@@ -909,9 +887,7 @@ a {
     background: #f8fafc;
 }
 
-/* =========================================================
-   SIMPLE SILO WIDGET
-========================================================= */
+/* SIMPLE SILO WIDGET */
 .silo-widget {
     display: flex;
     flex-direction: column;
@@ -1068,9 +1044,7 @@ a {
     margin-right: 6px;
 }
 
-/* =========================================================
-   PREMIUM SILO DASHBOARD
-========================================================= */
+/* PREMIUM SILO DASHBOARD */
 .premium-silo-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -1308,9 +1282,7 @@ a {
     background: #f8fafc;
 }
 
-/* =========================================================
-   SUMMARY POPUP CARD
-========================================================= */
+/* SUMMARY POPUP CARD*/
 .summary-popup-card {
     width: 100%;
     border: 1px solid #e2e8f0;
@@ -1405,9 +1377,7 @@ a {
     border: 1px solid #fecdd3;
 }
 
-/* =========================================================
-   DASHBOARD MODAL
-========================================================= */
+/* DASHBOARD MODAL */
 .dashboard-modal {
     position: fixed;
     inset: 0;
@@ -1584,9 +1554,7 @@ body.modal-open {
     overflow: hidden;
 }
 
-/* =========================================================
-   REPORT DETAIL DOCUMENT
-========================================================= */
+/* REPORT DETAIL DOCUMENT */
 .report-page-action {
     max-width: 1280px;
     margin: 0 auto 18px auto;
