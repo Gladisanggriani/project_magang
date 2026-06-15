@@ -1780,9 +1780,7 @@ body.modal-open {
     border: 1px solid #cbd5e1;
 }
 
-/* =========================================================
-   LOGIN & REGISTER PAGE
-========================================================= */
+/* LOGIN & REGISTER PAGE */
 .login-page {
     min-height: 100vh;
     background:
