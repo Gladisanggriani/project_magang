@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="page-card">
-        <h2 class="page-card-title">Laporan Nuansa Harian</h2>
+        <h2 class="page-card-title">Input Laporan Nuansa Harian</h2>
         <p class="page-card-subtitle">
             Input data operasional harian GP Dumai.
         </p>
