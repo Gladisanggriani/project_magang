@@ -28,7 +28,7 @@
                 </div>
 
                 <div>
-                    <div class="brand-title">Dashboard Operasional GP Dumai</div>
+                    <div class="brand-title">Dashboard Operasional Unit Pabrik Dumai</div>
 
                     <div class="brand-subtitle">
                         PT Semen Padang - Monitoring Produksi dan Operasional Harian
@@ -39,9 +39,6 @@
                             • Mode: VIEWER
                         @endauth
 
-                        @if (request()->routeIs('dashboard') || request()->routeIs('dashboard.public'))
-                            • Auto refresh 30 detik
-                        @endif
                     </div>
                 </div>
             </div>

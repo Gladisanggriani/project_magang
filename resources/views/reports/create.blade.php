@@ -136,7 +136,7 @@
             </div>
 
             <div class="form-grid">
-                @foreach (['Semen', 'Klinker', 'Limestone', 'Gypsum', 'Pozzolan', 'Fly Ash Dry SDS', 'Fly Ash Dry ESM', 'Fly Ash Dry IK', 'Fly Ash Dry SDO', 'Fly Ash Wet Tenayan', 'Fly Ash Wet RAPP'] as $material)
+                @foreach (['Semen', 'Klinker', 'Limestone', 'Gypsum', 'Pozzolan', 'Fly Ash', 'Fly Ash Dry SDS', 'Fly Ash Dry ESM', 'Fly Ash Dry IK', 'Fly Ash Dry SDO', 'Fly Ash Wet Tenayan', 'Fly Ash Wet RAPP'] as $material)
                     <div class="form-group">
                         <label>{{ $material }}</label>
                         <input type="text" inputmode="decimal" name="receipts[{{ $material }}]"
@@ -156,7 +156,7 @@
             </div>
 
             <div class="form-grid">
-                @foreach (['Semen', 'Klinker', 'Limestone', 'Gypsum', 'Pozzolan', 'Fly Ash Dry SDS', 'Fly Ash Dry ESM', 'Fly Ash Dry IK', 'Fly Ash Dry SDO', 'Fly Ash Wet Tenayan', 'Fly Ash Wet RAPP'] as $material)
+                @foreach (['Semen', 'Klinker', 'Limestone', 'Gypsum', 'Pozzolan', 'Fly Ash','Fly Ash Dry SDS', 'Fly Ash Dry ESM', 'Fly Ash Dry IK', 'Fly Ash Dry SDO', 'Fly Ash Wet Tenayan', 'Fly Ash Wet RAPP'] as $material)
                     <div class="form-group">
                         <label>{{ $material }}</label>
                         <input type="text" inputmode="decimal" name="intransits[{{ $material }}]"
@@ -176,7 +176,7 @@
             </div>
 
             <div class="form-grid">
-                @foreach (['Klinker', 'Gypsum Natural', 'Gypsum Purified', 'Pozzolan', 'Wet Fly Ash', 'Dry Fly Ash', 'Limestone', 'Solar', 'Gas'] as $material)
+                @foreach (['Klinker', 'Gypsum Natural', 'Gypsum Purified', 'Dry Fly Ash','Pozzolan', 'Fly Ash','Wet Fly Ash', 'Limestone', 'Solar', 'Gas'] as $material)
                     <div class="form-group">
                         <label>{{ $material }}</label>
                         <input type="text" inputmode="decimal" name="usages[{{ $material }}]"

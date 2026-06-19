@@ -46,22 +46,12 @@
                     <div>
                         <span class="rkap-label">Data Manual Tahunan</span>
                         <h3>RKAP Cement Mill dan Packer</h3>
-                        <p>
-                            Data RKAP berisi target Cement Mill dan Packer per bulan selama satu tahun.
-                            Data ini berdiri sendiri dan tidak diambil dari laporan harian.
-                        </p>
                     </div>
 
                     <div class="rkap-year">
                         <label>Tahun</label>
-                        <input
-                            type="number"
-                            name="year"
-                            value="{{ old('year', $year) }}"
-                            min="2000"
-                            max="2100"
-                            required
-                        >
+                        <input type="number" name="year" value="{{ old('year', $year) }}" min="2000" max="2100"
+                            required>
                     </div>
                 </div>
 
@@ -87,6 +77,7 @@
                     <span>Total Keseluruhan</span>
                     <strong>{{ number_format($grandTotal ?? 0, 2, ',', '.') }} Ton</strong>
                 </div>
+                <br>
             </div>
 
             @if ($canManageRakp)
@@ -114,13 +105,9 @@
                                 </div>
 
                                 <div class="rkap-input-box">
-                                    <input
-                                        type="text"
-                                        inputmode="decimal"
-                                        name="cement_mill[{{ $monthNumber }}]"
+                                    <input type="text" inputmode="decimal" name="cement_mill[{{ $monthNumber }}]"
                                         value="{{ old('cement_mill.' . $monthNumber, $cementMillValue ? number_format($cementMillValue, 2, ',', '.') : '') }}"
-                                        placeholder="0,00"
-                                    >
+                                        placeholder="0,00">
                                     <small>Ton</small>
                                 </div>
                             </div>
@@ -152,13 +139,9 @@
                                 </div>
 
                                 <div class="rkap-input-box">
-                                    <input
-                                        type="text"
-                                        inputmode="decimal"
-                                        name="packer[{{ $monthNumber }}]"
+                                    <input type="text" inputmode="decimal" name="packer[{{ $monthNumber }}]"
                                         value="{{ old('packer.' . $monthNumber, $packerValue ? number_format($packerValue, 2, ',', '.') : '') }}"
-                                        placeholder="0,00"
-                                    >
+                                        placeholder="0,00">
                                     <small>Ton</small>
                                 </div>
                             </div>
@@ -166,12 +149,13 @@
                     </div>
                 </div>
             @endif
-
+        </div>
+        <br>
+        <div class="rkap-page">
             <div class="rkap-result-section">
                 <div class="rkap-result-header" style="text-align: center;">
                     <div>
                         <h4>Rekap Hasil RKAP Tahun {{ $year }}</h4>
-                        <p>Ringkasan hasil RKAP Cement Mill dan Packer selama satu tahun.</p>
                     </div>
                 </div>
 
@@ -212,7 +196,8 @@
                                     <tbody>
                                         @foreach ($monthNames as $monthNumber => $monthName)
                                             @php
-                                                $cementMillValue = optional($cementMillRakps->get($monthNumber))->value ?? 0;
+                                                $cementMillValue =
+                                                    optional($cementMillRakps->get($monthNumber))->value ?? 0;
                                             @endphp
 
                                             <tr>
@@ -346,7 +331,8 @@
                                     <tbody>
                                         @foreach ($monthNames as $monthNumber => $monthName)
                                             @php
-                                                $cementMillValue = optional($cementMillRakps->get($monthNumber))->value ?? 0;
+                                                $cementMillValue =
+                                                    optional($cementMillRakps->get($monthNumber))->value ?? 0;
                                                 $packerValue = optional($packerRakps->get($monthNumber))->value ?? 0;
                                                 $monthlyTotal = $cementMillValue + $packerValue;
                                             @endphp
@@ -404,6 +390,8 @@
                 </div>
             </div>
         </div>
+
+
 
         <div class="form-section rkap-action-card">
             <div class="form-actions">
