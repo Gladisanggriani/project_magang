@@ -64,7 +64,7 @@
 
                 <div class="form-group">
                     <label>Feed</label>
-                    <input type="text" inputmode="decimal" name="feed" value="{{ old('feed') }}"
+                    <input type="text" name="feed" readonly inputmode="decimal" value="{{ old('feed') }}"
                         placeholder="Contoh: 2.520,78">
                 </div>
 
@@ -87,9 +87,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Running Hours</label>
-                    <input type="text" inputmode="decimal" name="running_hours" value="{{ old('running_hours') }}"
-                        placeholder="Contoh: 12,50">
+                    <label>Jam Start</label>
+                    <input type="time" name="start_time" value="{{ old('start_time') }}">
+                </div>
+
+                <div class="form-group">
+                    <label>Jam Stop</label>
+                    <input type="time" name="end_time" value="{{ old('end_time') }}">
                 </div>
 
                 <div class="form-group">
@@ -106,10 +110,15 @@
                         <small class="text-danger">{{ $message }}</small>
                     @enderror
                 </div>
+                <div class="form-group">
+                    <label>Stock Awal Silo</label>
+                    <input type="text" inputmode="decimal" name="stock_awal_silo" value="{{ old('stock_awal_silo') }}"
+                        placeholder="Contoh: 1.250,00">
+                </div>
 
                 <div class="form-group">
                     <label>Silo Semen</label>
-                    <input type="text" inputmode="decimal" name="silo_semen" value="{{ old('silo_semen') }}"
+                    <input type="text" inputmode="decimal" name="silo_semen" readonly value="{{ old('silo_semen') }}"
                         placeholder="Contoh: 2.520,78">
                 </div>
 
@@ -156,7 +165,7 @@
             </div>
 
             <div class="form-grid">
-                @foreach (['Semen', 'Klinker', 'Limestone', 'Gypsum', 'Pozzolan', 'Fly Ash','Fly Ash Dry SDS', 'Fly Ash Dry ESM', 'Fly Ash Dry IK', 'Fly Ash Dry SDO', 'Fly Ash Wet Tenayan', 'Fly Ash Wet RAPP'] as $material)
+                @foreach (['Semen', 'Klinker', 'Limestone', 'Gypsum', 'Pozzolan', 'Fly Ash', 'Fly Ash Dry SDS', 'Fly Ash Dry ESM', 'Fly Ash Dry IK', 'Fly Ash Dry SDO', 'Fly Ash Wet Tenayan', 'Fly Ash Wet RAPP'] as $material)
                     <div class="form-group">
                         <label>{{ $material }}</label>
                         <input type="text" inputmode="decimal" name="intransits[{{ $material }}]"
@@ -176,7 +185,7 @@
             </div>
 
             <div class="form-grid">
-                @foreach (['Klinker', 'Gypsum Natural', 'Gypsum Purified', 'Dry Fly Ash','Pozzolan', 'Fly Ash','Wet Fly Ash', 'Limestone', 'Solar', 'Gas'] as $material)
+                @foreach (['Klinker', 'Gypsum Natural', 'Gypsum Purified', 'Dry Fly Ash', 'Pozzolan', 'Fly Ash', 'Wet Fly Ash', 'Limestone', 'Solar', 'Gas'] as $material)
                     <div class="form-group">
                         <label>{{ $material }}</label>
                         <input type="text" inputmode="decimal" name="usages[{{ $material }}]"
@@ -315,5 +324,72 @@
                 </a>
             </div>
         </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+
+                const productionCm = document.querySelector('[name="production_cm"]');
+                const productionPacker = document.querySelector('[name="production_packer"]');
+                const stockAwalSilo = document.querySelector('[name="stock_awal_silo"]');
+
+                const startTime = document.querySelector('[name="start_time"]');
+                const endTime = document.querySelector('[name="end_time"]');
+
+                const feedInput = document.querySelector('[name="feed"]');
+                const siloInput = document.querySelector('[name="silo_semen"]');
+
+                function parseNumber(value) {
+
+                    if (!value) return 0;
+
+                    value = value.replace(/\./g, '');
+                    value = value.replace(',', '.');
+
+                    return parseFloat(value) || 0;
+                }
+
+                function calculate() {
+
+                    const cm = parseNumber(productionCm.value);
+                    const packer = parseNumber(productionPacker.value);
+                    const stockAwal = parseNumber(stockAwalSilo.value);
+
+                    let runningHours = 0;
+
+                    if (startTime.value && endTime.value) {
+
+                        const start = new Date('2000-01-01 ' + startTime.value);
+                        const end = new Date('2000-01-01 ' + endTime.value);
+
+                        let diff = (end - start) / 1000 / 60 / 60;
+
+                        if (diff < 0) {
+                            diff += 24;
+                        }
+
+                        runningHours = diff;
+                    }
+
+                    let feed = 0;
+
+                    if (runningHours > 0) {
+                        feed = cm / runningHours;
+                    }
+
+                    const silo = cm + stockAwal - packer;
+
+                    feedInput.value = feed.toFixed(2);
+                    siloInput.value = silo.toFixed(2);
+                }
+
+                productionCm.addEventListener('input', calculate);
+                productionPacker.addEventListener('input', calculate);
+                stockAwalSilo.addEventListener('input', calculate);
+
+                startTime.addEventListener('change', calculate);
+                endTime.addEventListener('change', calculate);
+
+            });
+        </script>
     </form>
 @endsection

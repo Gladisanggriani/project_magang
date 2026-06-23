@@ -34,29 +34,67 @@ class DailyReportController extends Controller
         $this->validateReport($request);
 
         DB::transaction(function () use ($request) {
+
+            $start = strtotime($request->start_time);
+            $end = strtotime($request->end_time);
+
+            $runningHours = 0;
+
+            if ($start && $end) {
+
+                if ($end < $start) {
+                    $end += 86400;
+                }
+
+                $runningHours = round(($end - $start) / 3600, 2);
+            }
+
+            $productionCM = $this->normalizeNumber($request->production_cm);
+            $productionPacker = $this->normalizeNumber($request->production_packer);
+            $stockAwalSilo = $this->normalizeNumber($request->stock_awal_silo);
+
+            $feed = 0;
+
+            if ($runningHours > 0) {
+                $feed = round($productionCM / $runningHours, 2);
+            }
+
+            $siloSemen = $stockAwalSilo + $productionCM - $productionPacker;
+
             $report = DailyReport::create([
+
                 'report_date' => $request->report_date,
 
                 'cement_mill_status' => $request->cement_mill_status,
                 'cement_mill_note' => $request->cement_mill_note,
 
-                'feed' => $this->normalizeNumber($request->feed),
+                'feed' => $feed,
                 'blaine' => $this->normalizeNumber($request->blaine),
                 'sieving' => $this->normalizeNumber($request->sieving),
-                'production_cm' => $this->normalizeNumber($request->production_cm),
+
+                'production_cm' => $productionCM,
                 'production_ship' => $this->normalizeNumber($request->production_ship),
-                'running_hours' => $this->normalizeNumber($request->running_hours),
+
+                'running_hours' => $runningHours,
+
                 'clinker_factor' => $this->normalizeNumber($request->clinker_factor),
-                'silo_semen' => $this->normalizeNumber($request->silo_semen),
+
+                'start_time' => $request->start_time,
+                'end_time' => $request->end_time,
+
+                'stock_awal_silo' => $stockAwalSilo,
+                'silo_semen' => $siloSemen,
 
                 'packer1_status' => $request->packer1_status,
                 'packer1_note' => $request->packer1_note,
+
                 'packer2_status' => $request->packer2_status,
                 'packer2_note' => $request->packer2_note,
 
                 'truck_packer_area' => (int) $this->normalizeNumber($request->truck_packer_area),
                 'truck_emplacement_area' => (int) $this->normalizeNumber($request->truck_emplacement_area),
-                'production_packer' => $this->normalizeNumber($request->production_packer),
+
+                'production_packer' => $productionPacker,
 
                 'created_by' => Auth::id(),
             ]);
@@ -121,29 +159,67 @@ class DailyReportController extends Controller
         $this->validateReport($request, $report);
 
         DB::transaction(function () use ($request, $report) {
+
+            $start = strtotime($request->start_time);
+            $end = strtotime($request->end_time);
+
+            $runningHours = 0;
+
+            if ($start && $end) {
+
+                if ($end < $start) {
+                    $end += 86400;
+                }
+
+                $runningHours = round(($end - $start) / 3600, 2);
+            }
+
+            $productionCM = $this->normalizeNumber($request->production_cm);
+            $productionPacker = $this->normalizeNumber($request->production_packer);
+            $stockAwalSilo = $this->normalizeNumber($request->stock_awal_silo);
+
+            $feed = 0;
+
+            if ($runningHours > 0) {
+                $feed = round($productionCM / $runningHours, 2);
+            }
+
+            $siloSemen = $stockAwalSilo + $productionCM - $productionPacker;
+
             $report->update([
+
                 'report_date' => $request->report_date,
 
                 'cement_mill_status' => $request->cement_mill_status,
                 'cement_mill_note' => $request->cement_mill_note,
 
-                'feed' => $this->normalizeNumber($request->feed),
+                'feed' => $feed,
                 'blaine' => $this->normalizeNumber($request->blaine),
                 'sieving' => $this->normalizeNumber($request->sieving),
-                'production_cm' => $this->normalizeNumber($request->production_cm),
+
+                'production_cm' => $productionCM,
                 'production_ship' => $this->normalizeNumber($request->production_ship),
-                'running_hours' => $this->normalizeNumber($request->running_hours),
+
+                'running_hours' => $runningHours,
+
                 'clinker_factor' => $this->normalizeNumber($request->clinker_factor),
-                'silo_semen' => $this->normalizeNumber($request->silo_semen),
+
+                'start_time' => $request->start_time,
+                'end_time' => $request->end_time,
+
+                'stock_awal_silo' => $stockAwalSilo,
+                'silo_semen' => $siloSemen,
 
                 'packer1_status' => $request->packer1_status,
                 'packer1_note' => $request->packer1_note,
+
                 'packer2_status' => $request->packer2_status,
                 'packer2_note' => $request->packer2_note,
 
                 'truck_packer_area' => (int) $this->normalizeNumber($request->truck_packer_area),
                 'truck_emplacement_area' => (int) $this->normalizeNumber($request->truck_emplacement_area),
-                'production_packer' => $this->normalizeNumber($request->production_packer),
+
+                'production_packer' => $productionPacker,
             ]);
 
             $this->saveDetailData($report, $request);
@@ -502,14 +578,19 @@ class DailyReportController extends Controller
             'packer1_note' => 'nullable|string|max:255',
             'packer2_note' => 'nullable|string|max:255',
 
-            'feed' => 'nullable|string',
             'blaine' => 'nullable|string',
             'sieving' => 'nullable|string',
             'production_cm' => 'nullable|string',
             'production_ship' => 'nullable|string',
-            'running_hours' => 'nullable|string',
             'clinker_factor' => 'nullable|string',
-            'silo_semen' => 'nullable|string',
+            'start_time' => 'required',
+            'end_time' => 'required',
+
+            'stock_awal_silo' => 'nullable|string',
+
+            'feed' => 'nullable',
+            'running_hours' => 'nullable',
+            'silo_semen' => 'nullable',
 
             'truck_packer_area' => 'nullable|string',
             'truck_emplacement_area' => 'nullable|string',
