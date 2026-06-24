@@ -391,8 +391,6 @@
             </div>
         </div>
 
-
-
         <div class="form-section rkap-action-card">
             <div class="form-actions">
                 @if ($canManageRakp)
