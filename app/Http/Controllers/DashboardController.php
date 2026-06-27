@@ -47,21 +47,36 @@ class DashboardController extends Controller
         $startOfMonth = $reportDate->copy()->startOfMonth();
         $endOfMonth = $reportDate->copy()->endOfMonth();
 
+        // MTD (Month to Date) Produksi
         $mtdProductionCm = DailyReport::whereBetween('report_date', [$startOfMonth, $endOfMonth])
             ->sum('production_cm');
 
         $mtdProductionPacker = DailyReport::whereBetween('report_date', [$startOfMonth, $endOfMonth])
-            ->sum('production_packer');
+            ->sum('production_packer'); // Tetap ada untuk total keseluruhan
+
+        // REVISI: Tambahan MTD untuk Packer 1 dan Packer 2
+        $mtdProductionPacker1 = DailyReport::whereBetween('report_date', [$startOfMonth, $endOfMonth])
+            ->sum('production_packer1');
+
+        $mtdProductionPacker2 = DailyReport::whereBetween('report_date', [$startOfMonth, $endOfMonth])
+            ->sum('production_packer2');
 
         $mtdProductionShip = DailyReport::whereBetween('report_date', [$startOfMonth, $endOfMonth])
             ->sum('production_ship');
 
         $dayOfMonth = $reportDate->day;
 
+        // Rata-rata Produksi (Average)
         $avgProductionCm = $dayOfMonth > 0 ? $mtdProductionCm / $dayOfMonth : 0;
         $avgProductionPacker = $dayOfMonth > 0 ? $mtdProductionPacker / $dayOfMonth : 0;
+
+        // REVISI: Tambahan Average untuk Packer 1 dan Packer 2
+        $avgProductionPacker1 = $dayOfMonth > 0 ? $mtdProductionPacker1 / $dayOfMonth : 0;
+        $avgProductionPacker2 = $dayOfMonth > 0 ? $mtdProductionPacker2 / $dayOfMonth : 0;
+
         $avgProductionShip = $dayOfMonth > 0 ? $mtdProductionShip / $dayOfMonth : 0;
 
+        // Variabel ini otomatis membawa seluruh kolom (termasuk production_packer1 & 2) ke Blade
         $chartReports = DailyReport::orderBy('report_date', 'asc')
             ->whereBetween('report_date', [$startOfMonth, $endOfMonth])
             ->get();
@@ -80,7 +95,7 @@ class DashboardController extends Controller
             $closingStock = StockCalculationService::closingStock(
                 $todayReport->silo_semen,
                 $todayReport->production_cm,
-                $todayReport->production_packer
+                $todayReport->production_packer // Asumsi production_packer adalah akumulasi 1 & 2
             );
 
             $totalTruck =
@@ -161,9 +176,13 @@ class DashboardController extends Controller
             'todayReport',
             'mtdProductionCm',
             'mtdProductionPacker',
+            'mtdProductionPacker1', // REVISI: Kirim ke view
+            'mtdProductionPacker2', // REVISI: Kirim ke view
             'mtdProductionShip',
             'avgProductionCm',
             'avgProductionPacker',
+            'avgProductionPacker1', // REVISI: Kirim ke view
+            'avgProductionPacker2', // REVISI: Kirim ke view
             'avgProductionShip',
             'chartReports',
             'closingStock',

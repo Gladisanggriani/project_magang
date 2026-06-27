@@ -187,7 +187,8 @@
                 <div class="panel-header">
                     <div>
                         <h3 class="panel-title">Grafik Produksi Bulan Ini</h3>
-                        <p class="panel-subtitle">Perbandingan produksi Cement Mill dan produksi Packer per hari</p>
+                        {{-- REVISI: Mengubah deskripsi untuk 2 Packer --}}
+                        <p class="panel-subtitle">Perbandingan produksi Cement Mill, Packer 1, dan Packer 2 per hari</p>
                     </div>
                 </div>
 
@@ -772,12 +773,17 @@
             if (chartCanvas) {
                 const chartLabels = @json(($chartReports ?? collect())->pluck('report_date')->map(fn($date) => \Carbon\Carbon::parse($date)->format('d M')));
                 const productionCm = @json(($chartReports ?? collect())->pluck('production_cm'));
-                const productionPacker = @json(($chartReports ?? collect())->pluck('production_packer'));
+
+                // REVISI: Memecah data packer menjadi dua variabel terpisah.
+                // Pastikan nama kolom 'production_packer1' dan 'production_packer2' sesuai dengan di database/controller kamu.
+                const productionPacker1 = @json(($chartReports ?? collect())->pluck('production_packer1'));
+                const productionPacker2 = @json(($chartReports ?? collect())->pluck('production_packer2'));
 
                 new Chart(chartCanvas, {
                     data: {
                         labels: chartLabels,
-                        datasets: [{
+                        datasets: [
+                            {
                                 type: 'bar',
                                 label: 'Produksi Cement Mill',
                                 data: productionCm,
@@ -785,12 +791,25 @@
                                 borderRadius: 10,
                                 maxBarThickness: 32
                             },
+                            // REVISI: Dataset untuk Packer 1 (Garis Biru)
                             {
                                 type: 'line',
-                                label: 'Produksi Packer',
-                                data: productionPacker,
+                                label: 'Produksi Packer 1',
+                                data: productionPacker1,
                                 borderColor: 'rgba(37, 99, 235, 1)',
                                 backgroundColor: 'rgba(37, 99, 235, 0.15)',
+                                tension: 0.35,
+                                fill: false,
+                                pointRadius: 4,
+                                pointHoverRadius: 6
+                            },
+                            // REVISI: Dataset untuk Packer 2 (Garis Hijau)
+                            {
+                                type: 'line',
+                                label: 'Produksi Packer 2',
+                                data: productionPacker2,
+                                borderColor: 'rgba(25, 135, 84, 1)',
+                                backgroundColor: 'rgba(25, 135, 84, 0.15)',
                                 tension: 0.35,
                                 fill: false,
                                 pointRadius: 4,

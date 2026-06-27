@@ -65,7 +65,7 @@
                 <div class="form-group">
                     <label>Feed</label>
                     <input type="text" name="feed" readonly inputmode="decimal" value="{{ old('feed') }}"
-                        placeholder="Contoh: 2.520,78">
+                        placeholder="Contoh: 2.520,78" style="background-color: #f3f4f6;">
                 </div>
 
                 <div class="form-group">
@@ -110,6 +110,7 @@
                         <small class="text-danger">{{ $message }}</small>
                     @enderror
                 </div>
+
                 <div class="form-group">
                     <label>Stock Awal Silo</label>
                     <input type="text" inputmode="decimal" name="stock_awal_silo" value="{{ old('stock_awal_silo') }}"
@@ -119,7 +120,7 @@
                 <div class="form-group">
                     <label>Silo Semen</label>
                     <input type="text" inputmode="decimal" name="silo_semen" readonly value="{{ old('silo_semen') }}"
-                        placeholder="Contoh: 2.520,78">
+                        placeholder="Contoh: 2.520,78" style="background-color: #f3f4f6;">
                 </div>
 
                 <div class="form-group" style="grid-column: 1 / -1;">
@@ -207,7 +208,7 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label>Peralatan</label>
-                    <input type="text" value="Packer 1" readonly>
+                    <input type="text" value="Packer 1" readonly style="background-color: #f3f4f6;">
                 </div>
 
                 <div class="form-group">
@@ -229,7 +230,7 @@
 
                 <div class="form-group">
                     <label>Peralatan</label>
-                    <input type="text" value="Packer 2" readonly>
+                    <input type="text" value="Packer 2" readonly style="background-color: #f3f4f6;">
                 </div>
 
                 <div class="form-group">
@@ -285,10 +286,24 @@
             </div>
 
             <div class="form-grid">
+                {{-- REVISI: Menambahkan field Packer 1 dan Packer 2 --}}
+                <div class="form-group">
+                    <label>Produksi Packer 1</label>
+                    <input type="text" inputmode="decimal" name="production_packer1"
+                        value="{{ old('production_packer1') }}" placeholder="Contoh: 1.000,00">
+                </div>
+
+                <div class="form-group">
+                    <label>Produksi Packer 2</label>
+                    <input type="text" inputmode="decimal" name="production_packer2"
+                        value="{{ old('production_packer2') }}" placeholder="Contoh: 1.520,78">
+                </div>
+
                 <div class="form-group">
                     <label>Total Produksi Packer</label>
-                    <input type="text" inputmode="decimal" name="production_packer"
-                        value="{{ old('production_packer') }}" placeholder="Contoh: 2.520,78">
+                    {{-- Total produksi di-set readonly dan diisi otomatis oleh JavaScript di bawah --}}
+                    <input type="text" inputmode="decimal" name="production_packer" readonly
+                        value="{{ old('production_packer') }}" placeholder="Dihitung otomatis" style="background-color: #f3f4f6;">
                 </div>
             </div>
         </div>
@@ -329,8 +344,12 @@
             document.addEventListener('DOMContentLoaded', function() {
 
                 const productionCm = document.querySelector('[name="production_cm"]');
-                const productionPacker = document.querySelector('[name="production_packer"]');
                 const stockAwalSilo = document.querySelector('[name="stock_awal_silo"]');
+
+                // REVISI: Memanggil elemen input packer 1, packer 2, dan total
+                const productionPacker1 = document.querySelector('[name="production_packer1"]');
+                const productionPacker2 = document.querySelector('[name="production_packer2"]');
+                const productionPackerTotal = document.querySelector('[name="production_packer"]');
 
                 const startTime = document.querySelector('[name="start_time"]');
                 const endTime = document.querySelector('[name="end_time"]');
@@ -338,57 +357,59 @@
                 const feedInput = document.querySelector('[name="feed"]');
                 const siloInput = document.querySelector('[name="silo_semen"]');
 
+                // Helper untuk membaca nilai angka (mengubah format koma Indonesia ke format float JavaScript)
                 function parseNumber(value) {
-
                     if (!value) return 0;
-
-                    value = value.replace(/\./g, '');
-                    value = value.replace(',', '.');
-
+                    value = value.replace(/\./g, ''); // Hapus titik (ribuan)
+                    value = value.replace(',', '.');  // Ganti koma dengan titik (desimal)
                     return parseFloat(value) || 0;
                 }
 
                 function calculate() {
 
                     const cm = parseNumber(productionCm.value);
-                    const packer = parseNumber(productionPacker.value);
+                    const packer1 = parseNumber(productionPacker1.value);
+                    const packer2 = parseNumber(productionPacker2.value);
                     const stockAwal = parseNumber(stockAwalSilo.value);
 
+                    // 1. Menghitung Total Produksi Packer
+                    const totalPacker = packer1 + packer2;
+                    // Format kembali ke bentuk koma untuk ditampilkan
+                    productionPackerTotal.value = totalPacker > 0 ? totalPacker.toFixed(2).replace('.', ',') : '';
+
+                    // 2. Menghitung Running Hours & Feed
                     let runningHours = 0;
-
                     if (startTime.value && endTime.value) {
-
                         const start = new Date('2000-01-01 ' + startTime.value);
                         const end = new Date('2000-01-01 ' + endTime.value);
 
                         let diff = (end - start) / 1000 / 60 / 60;
-
                         if (diff < 0) {
                             diff += 24;
                         }
-
                         runningHours = diff;
                     }
 
                     let feed = 0;
-
                     if (runningHours > 0) {
                         feed = cm / runningHours;
                     }
 
-                    const silo = cm + stockAwal - packer;
+                    // 3. Menghitung Silo Semen menggunakan nilai totalPacker yang baru
+                    const silo = cm + stockAwal - totalPacker;
 
-                    feedInput.value = feed.toFixed(2);
-                    siloInput.value = silo.toFixed(2);
+                    feedInput.value = feed.toFixed(2).replace('.', ',');
+                    siloInput.value = silo.toFixed(2).replace('.', ',');
                 }
 
+                // Jalankan fungsi saat ada input
                 productionCm.addEventListener('input', calculate);
-                productionPacker.addEventListener('input', calculate);
+                productionPacker1.addEventListener('input', calculate);
+                productionPacker2.addEventListener('input', calculate);
                 stockAwalSilo.addEventListener('input', calculate);
 
                 startTime.addEventListener('change', calculate);
                 endTime.addEventListener('change', calculate);
-
             });
         </script>
     </form>

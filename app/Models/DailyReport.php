@@ -42,6 +42,8 @@ class DailyReport extends Model
         'truck_emplacement_area',
 
         'production_packer',
+        'production_packer1',
+        'production_packer2',
 
         'created_by'
     ];
@@ -69,9 +71,4 @@ class DailyReport extends Model
     {
         return $this->hasMany(MaterialIntransit::class);
     }
-
-    
-
 }
-
-
