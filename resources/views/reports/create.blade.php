@@ -309,24 +309,34 @@
         </div>
 
         {{-- STOCK KANTONG --}}
-        <div class="form-section">
-            <div class="form-section-title">
-                <div class="form-section-icon">
-                    <i class="bi bi-archive"></i>
-                </div>
-                <span>8. Stock Kantong</span>
-            </div>
-
-            <div class="form-grid">
-                @foreach (['BB 50 KG SP', 'BB 40 KG SP', 'Dinamik 50 KG', 'Dinamik 40 KG', 'Merdeka 50 KG', 'Merdeka 40 KG'] as $bag)
-                    <div class="form-group">
-                        <label>{{ $bag }}</label>
-                        <input type="number" step="1" min="0" name="bags[{{ $bag }}]"
-                            value="{{ old('bags.' . $bag) }}" placeholder="0">
-                    </div>
-                @endforeach
-            </div>
+<div class="form-section">
+    <div class="form-section-title">
+        <div class="form-section-icon">
+            <i class="bi bi-archive"></i>
         </div>
+        <span>8. Stock Kantong</span>
+    </div>
+
+    <div class="form-grid">
+        @foreach (['BB 50 KG SP', 'BB 40 KG SP', 'Dinamik 50 KG', 'Dinamik 40 KG', 'Merdeka 50 KG', 'Merdeka 40 KG'] as $bag)
+            @php
+                // Tangani spasi yang diubah menjadi underscore oleh PHP
+                $bagKey = str_replace(' ', '_', $bag);
+
+                // Ambil nilai dari session (jika ada error) atau dari database (jika ini form edit)
+                // Catatan: Jika ini form create, hapus $bagValue($bag). Jika form edit, biarkan.
+                $value = old('bags.' . $bagKey, isset($bagValue) ? $bagValue($bag) : null);
+            @endphp
+            <div class="form-group">
+                <label>{{ $bag }}</label>
+                {{-- Ubah type menjadi text dan tambahkan inputmode="decimal" --}}
+                <input type="text" inputmode="decimal" name="bags[{{ $bag }}]"
+                    value="{{ $value ? number_format((float)$value, 2, ',', '.') : '' }}"
+                    placeholder="Contoh: 1.000,00">
+            </div>
+        @endforeach
+    </div>
+</div>
 
         <div class="form-section">
             <div class="form-actions">

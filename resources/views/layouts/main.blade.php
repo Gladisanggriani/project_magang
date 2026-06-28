@@ -16,6 +16,53 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @stack('scripts')
+
+    <style>
+        /* CSS Untuk Fixed Footer */
+        .dashboard-body {
+            /* Menambahkan padding bawah agar konten tidak tertutup footer */
+            padding-bottom: 70px;
+            /* Pastikan body setidaknya setinggi layar agar footer selalu di bawah
+               walau konten sedikit */
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .fixed-footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: #ffffff; /* Bisa diubah sesuai tema */
+            color: #4b5563;
+            padding: 16px 24px;
+            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+            border-top: 1px solid #e5e7eb;
+            z-index: 9999;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Responsif untuk layar kecil (HP) */
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+            .dashboard-body {
+                padding-bottom: 90px; /* Padding lebih besar di HP karena footer menumpuk */
+            }
+        }
+    </style>
 </head>
 
 <body class="dashboard-body">
@@ -100,6 +147,13 @@
             @yield('content')
         </main>
     </div>
+
+    <footer class="fixed-footer">
+        <div class="footer-content">
+            <span>&copy; {{ date('Y') }} Operasional Unit Pabrik Dumai. All rights reserved.</span>
+            <span>PT Semen Padang - Versi 1.0</span>
+        </div>
+    </footer>
 
 </body>
 

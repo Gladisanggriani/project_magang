@@ -181,13 +181,11 @@
             </article>
         </section>
 
-
         <section class="dashboard-content">
             <div class="panel-card span-8">
                 <div class="panel-header">
                     <div>
                         <h3 class="panel-title">Grafik Produksi Bulan Ini</h3>
-                        {{-- REVISI: Mengubah deskripsi untuk 2 Packer --}}
                         <p class="panel-subtitle">Perbandingan produksi Cement Mill, Packer 1, dan Packer 2 per hari</p>
                     </div>
                 </div>
@@ -772,12 +770,23 @@
 
             if (chartCanvas) {
                 const chartLabels = @json(($chartReports ?? collect())->pluck('report_date')->map(fn($date) => \Carbon\Carbon::parse($date)->format('d M')));
-                const productionCm = @json(($chartReports ?? collect())->pluck('production_cm'));
 
-                // REVISI: Memecah data packer menjadi dua variabel terpisah.
-                // Pastikan nama kolom 'production_packer1' dan 'production_packer2' sesuai dengan di database/controller kamu.
-                const productionPacker1 = @json(($chartReports ?? collect())->pluck('production_packer1'));
-                const productionPacker2 = @json(($chartReports ?? collect())->pluck('production_packer2'));
+                // === SCRIPT PERBAIKAN: FORMATTER ANGKA UNTUK GRAFIK ===
+                // Berfungsi mengamankan nilai null, atau angka dengan format "1.520,78" agar jadi "1520.78" yang dibaca Chart.js
+                const cleanData = (val) => {
+                    if (val === null || val === undefined || val === '') return 0;
+                    if (typeof val === 'number') return val;
+                    let strVal = String(val);
+                    if (strVal.includes(',')) {
+                        strVal = strVal.replace(/\./g, '').replace(',', '.');
+                    }
+                    return parseFloat(strVal) || 0;
+                };
+
+                // Mengambil dan membersihkan data dengan .map(cleanData)
+                const productionCm = @json(($chartReports ?? collect())->pluck('production_cm')).map(cleanData);
+                const productionPacker1 = @json(($chartReports ?? collect())->pluck('production_packer1')).map(cleanData);
+                const productionPacker2 = @json(($chartReports ?? collect())->pluck('production_packer2')).map(cleanData);
 
                 new Chart(chartCanvas, {
                     data: {
@@ -791,7 +800,6 @@
                                 borderRadius: 10,
                                 maxBarThickness: 32
                             },
-                            // REVISI: Dataset untuk Packer 1 (Garis Biru)
                             {
                                 type: 'line',
                                 label: 'Produksi Packer 1',
@@ -803,7 +811,6 @@
                                 pointRadius: 4,
                                 pointHoverRadius: 6
                             },
-                            // REVISI: Dataset untuk Packer 2 (Garis Hijau)
                             {
                                 type: 'line',
                                 label: 'Produksi Packer 2',

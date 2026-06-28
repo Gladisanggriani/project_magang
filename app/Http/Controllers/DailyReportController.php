@@ -50,7 +50,12 @@ class DailyReportController extends Controller
             }
 
             $productionCM = $this->normalizeNumber($request->production_cm);
+
+            // PERBAIKAN: Menangkap nilai Packer 1 dan Packer 2
+            $productionPacker1 = $this->normalizeNumber($request->production_packer1);
+            $productionPacker2 = $this->normalizeNumber($request->production_packer2);
             $productionPacker = $this->normalizeNumber($request->production_packer);
+
             $stockAwalSilo = $this->normalizeNumber($request->stock_awal_silo);
 
             $feed = 0;
@@ -62,7 +67,6 @@ class DailyReportController extends Controller
             $siloSemen = $stockAwalSilo + $productionCM - $productionPacker;
 
             $report = DailyReport::create([
-
                 'report_date' => $request->report_date,
 
                 'cement_mill_status' => $request->cement_mill_status,
@@ -94,6 +98,9 @@ class DailyReportController extends Controller
                 'truck_packer_area' => (int) $this->normalizeNumber($request->truck_packer_area),
                 'truck_emplacement_area' => (int) $this->normalizeNumber($request->truck_emplacement_area),
 
+                // PERBAIKAN: Menyimpan nilai Packer 1 dan Packer 2 ke database
+                'production_packer1' => $productionPacker1,
+                'production_packer2' => $productionPacker2,
                 'production_packer' => $productionPacker,
 
                 'created_by' => Auth::id(),
@@ -175,7 +182,12 @@ class DailyReportController extends Controller
             }
 
             $productionCM = $this->normalizeNumber($request->production_cm);
+
+            // PERBAIKAN: Menangkap nilai Packer 1 dan Packer 2 saat update
+            $productionPacker1 = $this->normalizeNumber($request->production_packer1);
+            $productionPacker2 = $this->normalizeNumber($request->production_packer2);
             $productionPacker = $this->normalizeNumber($request->production_packer);
+
             $stockAwalSilo = $this->normalizeNumber($request->stock_awal_silo);
 
             $feed = 0;
@@ -187,7 +199,6 @@ class DailyReportController extends Controller
             $siloSemen = $stockAwalSilo + $productionCM - $productionPacker;
 
             $report->update([
-
                 'report_date' => $request->report_date,
 
                 'cement_mill_status' => $request->cement_mill_status,
@@ -219,6 +230,9 @@ class DailyReportController extends Controller
                 'truck_packer_area' => (int) $this->normalizeNumber($request->truck_packer_area),
                 'truck_emplacement_area' => (int) $this->normalizeNumber($request->truck_emplacement_area),
 
+                // PERBAIKAN: Update nilai Packer 1 dan Packer 2 ke database
+                'production_packer1' => $productionPacker1,
+                'production_packer2' => $productionPacker2,
                 'production_packer' => $productionPacker,
             ]);
 
@@ -428,25 +442,20 @@ class DailyReportController extends Controller
 
     private function saveDetailData(DailyReport $report, Request $request): void
     {
-        /*
-        |--------------------------------------------------------------------------
-        | Stock material tidak diinput manual.
-        |--------------------------------------------------------------------------
-        | Stock dihitung otomatis:
-        | Stock hari ini = stock hari sebelumnya + penerimaan hari ini - pemakaian hari ini
-        */
         $report->materialStocks()->delete();
         $report->materialReceipts()->delete();
         $report->materialUsages()->delete();
         $report->materialIntransits()->delete();
         $report->bagStocks()->delete();
 
-        foreach ($request->receipts ?? [] as $materialName => $quantity) {
+        foreach ($request->receipts ?? [] as $materialKey => $quantity) {
             $normalizedQuantity = $this->normalizeNumber($quantity);
 
             if ($this->isEmptyDetailValue($quantity, $normalizedQuantity)) {
                 continue;
             }
+
+            $materialName = str_replace('_', ' ', $materialKey);
 
             MaterialReceipt::create([
                 'daily_report_id' => $report->id,
@@ -456,12 +465,14 @@ class DailyReportController extends Controller
             ]);
         }
 
-        foreach ($request->usages ?? [] as $materialName => $quantity) {
+        foreach ($request->usages ?? [] as $materialKey => $quantity) {
             $normalizedQuantity = $this->normalizeNumber($quantity);
 
             if ($this->isEmptyDetailValue($quantity, $normalizedQuantity)) {
                 continue;
             }
+
+            $materialName = str_replace('_', ' ', $materialKey);
 
             MaterialUsage::create([
                 'daily_report_id' => $report->id,
@@ -471,12 +482,14 @@ class DailyReportController extends Controller
             ]);
         }
 
-        foreach ($request->intransits ?? [] as $materialName => $quantity) {
+        foreach ($request->intransits ?? [] as $materialKey => $quantity) {
             $normalizedQuantity = $this->normalizeNumber($quantity);
 
             if ($this->isEmptyDetailValue($quantity, $normalizedQuantity)) {
                 continue;
             }
+
+            $materialName = str_replace('_', ' ', $materialKey);
 
             MaterialIntransit::create([
                 'daily_report_id' => $report->id,
@@ -486,12 +499,14 @@ class DailyReportController extends Controller
             ]);
         }
 
-        foreach ($request->bags ?? [] as $bagType => $quantity) {
+        foreach ($request->bags ?? [] as $bagKey => $quantity) {
             $normalizedQuantity = $this->normalizeNumber($quantity);
 
             if ($this->isEmptyDetailValue($quantity, $normalizedQuantity)) {
                 continue;
             }
+
+            $bagType = str_replace('_', ' ', $bagKey);
 
             BagStock::create([
                 'daily_report_id' => $report->id,
@@ -594,6 +609,10 @@ class DailyReportController extends Controller
 
             'truck_packer_area' => 'nullable|string',
             'truck_emplacement_area' => 'nullable|string',
+
+            // PERBAIKAN: Validasi input Packer 1 dan 2
+            'production_packer1' => 'nullable|string',
+            'production_packer2' => 'nullable|string',
             'production_packer' => 'nullable|string',
 
             'receipts' => 'nullable|array',

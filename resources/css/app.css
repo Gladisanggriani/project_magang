@@ -3181,3 +3181,30 @@ body {
     }
 }
 
+/*FOOOTER*/
+.fixed-footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #ffffff;
+    color: #4b5563;
+    padding: 12px 20px;
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+    border-top: 1px solid #e5e7eb;
+    z-index: 9999;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-size: 0.875rem; /* Ukuran teks kecil (14px) */
+    font-weight: 500;
+}
+
+body {
+    padding-bottom: 70px;
+}
