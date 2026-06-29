@@ -41,11 +41,12 @@
                         @csrf
 
                         <div class="login-form-group">
-                            <label for="email">Email</label>
-                            <input id="email" type="email" name="email" value="{{ old('email') }}" required
-                                autofocus autocomplete="username" placeholder="Masukkan email">
+                            <label for="username">Username</label>
 
-                            @error('email')
+                            <input id="username" type="text" name="username" value="{{ old('username') }}" required
+                                autofocus autocomplete="username" placeholder="Masukkan username">
+
+                            @error('username')
                                 <div class="login-error">{{ $message }}</div>
                             @enderror
                         </div>

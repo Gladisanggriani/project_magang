@@ -6,14 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
     /**
-     * Show login page
+     * Show login page.
      */
     public function create(): View
     {
@@ -21,36 +19,43 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Handle login request
+     * Handle login request.
      */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'email' => ['required', 'email'],
+            'username' => ['required', 'string'],
             'password' => ['required'],
         ]);
 
-        $credentials = $request->only('email', 'password');
+        $credentials = [
+            'username' => $request->username,
+            'password' => $request->password,
+        ];
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+
             $request->session()->regenerate();
 
             return redirect()->intended('/dashboard');
         }
 
-        return back()->withErrors([
-            'email' => 'Email atau password salah.',
-        ]);
+        return back()
+            ->withErrors([
+                'username' => 'Username atau password salah.',
+            ])
+            ->onlyInput('username');
     }
 
     /**
-     * Logout
+     * Logout.
      */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::logout();
 
         $request->session()->invalidate();
+
         $request->session()->regenerateToken();
 
         return redirect('/');

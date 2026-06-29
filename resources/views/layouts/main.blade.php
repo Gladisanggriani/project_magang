@@ -58,8 +58,10 @@
                 gap: 8px;
                 text-align: center;
             }
+
             .dashboard-body {
-                padding-bottom: 90px; /* Padding lebih besar di HP karena footer menumpuk */
+                padding-bottom: 90px;
+                /* Padding lebih besar di HP karena footer menumpuk */
             }
         }
     </style>
@@ -78,7 +80,8 @@
                     <div class="brand-title">Dashboard Operasional Unit Pabrik Dumai</div>
 
                     <div class="brand-subtitle">
-                        PT Semen Padang - Monitoring Produksi dan Operasional Harian
+                        <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">PT Semen Padang — Unit
+                            Pabrik Dumai</span>
 
                         @auth
                             • Role: {{ strtoupper(auth()->user()->role) }}
