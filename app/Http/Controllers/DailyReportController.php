@@ -54,8 +54,9 @@ class DailyReportController extends Controller
             // PERBAIKAN: Menangkap nilai Packer 1 dan Packer 2
             $productionPacker1 = $this->normalizeNumber($request->production_packer1);
             $productionPacker2 = $this->normalizeNumber($request->production_packer2);
-            $productionPacker = $this->normalizeNumber($request->production_packer);
 
+            // Total produksi packer dihitung otomatis
+            $productionPacker = $productionPacker1 + $productionPacker2;
             $stockAwalSilo = $this->normalizeNumber($request->stock_awal_silo);
 
             $feed = 0;
@@ -186,8 +187,8 @@ class DailyReportController extends Controller
             // PERBAIKAN: Menangkap nilai Packer 1 dan Packer 2 saat update
             $productionPacker1 = $this->normalizeNumber($request->production_packer1);
             $productionPacker2 = $this->normalizeNumber($request->production_packer2);
-            $productionPacker = $this->normalizeNumber($request->production_packer);
 
+            $productionPacker = $productionPacker1 + $productionPacker2;
             $stockAwalSilo = $this->normalizeNumber($request->stock_awal_silo);
 
             $feed = 0;
@@ -613,7 +614,6 @@ class DailyReportController extends Controller
             // PERBAIKAN: Validasi input Packer 1 dan 2
             'production_packer1' => 'nullable|string',
             'production_packer2' => 'nullable|string',
-            'production_packer' => 'nullable|string',
 
             'receipts' => 'nullable|array',
             'receipts.*' => 'nullable|string',

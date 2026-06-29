@@ -186,7 +186,8 @@
                 <div class="panel-header">
                     <div>
                         <h3 class="panel-title">Grafik Produksi Bulan Ini</h3>
-                        <p class="panel-subtitle">Perbandingan produksi Cement Mill, Packer 1, dan Packer 2 per hari</p>
+                        {{-- REVISI KETERANGAN: Disesuaikan dengan data baru --}}
+                        <p class="panel-subtitle">Perbandingan Produksi Cement Mill, Total Packer, Packer 1, dan Packer 2</p>
                     </div>
                 </div>
 
@@ -586,7 +587,6 @@
                                 <div class="modal-data-subtext">Intransit material</div>
                             </div>
                         </div>
-
                         <div class="modal-data-value yellow">
                             {{ number_format($intransit->quantity, 2, ',', '.') }} {{ $intransit->unit }}
                         </div>
@@ -771,20 +771,21 @@
             if (chartCanvas) {
                 const chartLabels = @json(($chartReports ?? collect())->pluck('report_date')->map(fn($date) => \Carbon\Carbon::parse($date)->format('d M')));
 
-                // === SCRIPT PERBAIKAN: FORMATTER ANGKA UNTUK GRAFIK ===
-                // Berfungsi mengamankan nilai null, atau angka dengan format "1.520,78" agar jadi "1520.78" yang dibaca Chart.js
                 const cleanData = (val) => {
                     if (val === null || val === undefined || val === '') return 0;
                     if (typeof val === 'number') return val;
+
                     let strVal = String(val);
-                    if (strVal.includes(',')) {
-                        strVal = strVal.replace(/\./g, '').replace(',', '.');
-                    }
+                    strVal = strVal.replace(/\./g, '');
+                    strVal = strVal.replace(',', '.');
+
                     return parseFloat(strVal) || 0;
                 };
 
-                // Mengambil dan membersihkan data dengan .map(cleanData)
+                // ==== REVISI DATA GRAFIK ====
                 const productionCm = @json(($chartReports ?? collect())->pluck('production_cm')).map(cleanData);
+                // Mengambil nilai TOTAL PACKER
+                const productionPackerTotal = @json(($chartReports ?? collect())->pluck('production_packer')).map(cleanData);
                 const productionPacker1 = @json(($chartReports ?? collect())->pluck('production_packer1')).map(cleanData);
                 const productionPacker2 = @json(($chartReports ?? collect())->pluck('production_packer2')).map(cleanData);
 
@@ -796,15 +797,23 @@
                                 type: 'bar',
                                 label: 'Produksi Cement Mill',
                                 data: productionCm,
-                                backgroundColor: 'rgba(215, 25, 32, 0.70)',
-                                borderRadius: 10,
+                                backgroundColor: 'rgba(215, 25, 32, 0.70)', // Merah
+                                borderRadius: 6,
+                                maxBarThickness: 32
+                            },
+                            {
+                                type: 'bar',
+                                label: 'Total Produksi Packer',
+                                data: productionPackerTotal,
+                                backgroundColor: 'rgba(249, 115, 22, 0.70)', // Orange
+                                borderRadius: 6,
                                 maxBarThickness: 32
                             },
                             {
                                 type: 'line',
                                 label: 'Produksi Packer 1',
                                 data: productionPacker1,
-                                borderColor: 'rgba(37, 99, 235, 1)',
+                                borderColor: 'rgba(37, 99, 235, 1)', // Biru
                                 backgroundColor: 'rgba(37, 99, 235, 0.15)',
                                 tension: 0.35,
                                 fill: false,
@@ -815,7 +824,7 @@
                                 type: 'line',
                                 label: 'Produksi Packer 2',
                                 data: productionPacker2,
-                                borderColor: 'rgba(25, 135, 84, 1)',
+                                borderColor: 'rgba(25, 135, 84, 1)', // Hijau
                                 backgroundColor: 'rgba(25, 135, 84, 0.15)',
                                 tension: 0.35,
                                 fill: false,
@@ -850,6 +859,7 @@
                 });
             }
 
+            // Script Modal dan Animasi Silo tidak ada perubahan
             const siloUrl = "{{ route('dashboard.silo-data') }}";
             const lastUpdateEl = document.getElementById('silo-last-update-time');
 
@@ -925,8 +935,7 @@
                         if (valueEl) valueEl.textContent = silo.formatted_value;
                         if (capacityEl) capacityEl.textContent = silo.formatted_capacity;
                         if (percentageEl) percentageEl.textContent = silo.formatted_percentage;
-                        if (percentageBadgeEl) percentageBadgeEl.textContent = silo
-                        .formatted_percentage;
+                        if (percentageBadgeEl) percentageBadgeEl.textContent = silo.formatted_percentage;
 
                         if (deltaEl) {
                             if (silo.trend === 'up') {
